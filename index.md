@@ -37,6 +37,14 @@ GitHubPages::Dependencies.gems.each do |gem, version|
 end
 ```
 
+```Objective-C
+// Objective-C code
+	UIView* view = [[UIView alloc] init];
+	[view setAlpha:1.0f];
+	BOOL isSelected = YES;
+	[view setSelected:isSelected];
+```
+
 #### Header 4
 
 *   This is an unordered list following a header.
