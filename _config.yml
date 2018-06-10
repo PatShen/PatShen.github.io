@@ -1,6 +1,8 @@
-title: PatShen
+title: 沈闻欣的储物间
 # logo: /assets/img/logo.png
-description: My name is Shen Wenxin. A iOS developer
+description: 我叫沈闻欣，是一个iOS开发者，目前就职于南京厚建软件。
+url: https://patshen.github.io
+
 show_downloads: false
 google_analytics:
 theme: jekyll-theme-minimal
