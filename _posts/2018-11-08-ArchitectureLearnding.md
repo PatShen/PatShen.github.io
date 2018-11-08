@@ -1,10 +1,12 @@
 ---
 layout: post
 title: 架构学习
-author: swx
+author: 沈闻欣
 tags: architecture,架构
 
 ---
+
+# 架构学习
 
 ## 架构是什么？
 
