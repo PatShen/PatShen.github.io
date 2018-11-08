@@ -1,7 +1,6 @@
 ---
 layout: post
 title: 架构学习
-author: 沈闻欣
 tags: architecture,架构
 
 ---
