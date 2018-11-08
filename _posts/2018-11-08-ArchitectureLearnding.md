@@ -1,3 +1,11 @@
+---
+layout: post
+title: Autolayout and UIScrollView
+author: swx
+tag: architecture 架构
+
+---
+
 # 架构学习(Architecture Learnding)
 
 ## 架构是什么？
