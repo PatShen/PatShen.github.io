@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+<!-- Begin Jekyll SEO tag v2.5.0 -->
+<title>Github Pages 本地调试环境搭建笔记 | 沈闻欣的储物间</title>
+<meta name="generator" content="Jekyll v3.8.5" />
+<meta property="og:title" content="Github Pages 本地调试环境搭建笔记" />
+<meta name="author" content="沈闻欣" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="之前遗留的坑" />
+<meta property="og:description" content="之前遗留的坑" />
+<link rel="canonical" href="http://localhost:4000/2019/09/17/gitpages_local_debug_note.html" />
+<meta property="og:url" content="http://localhost:4000/2019/09/17/gitpages_local_debug_note.html" />
+<meta property="og:site_name" content="沈闻欣的储物间" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2019-09-17T00:00:00+08:00" />
+<script type="application/ld+json">
+{"datePublished":"2019-09-17T00:00:00+08:00","dateModified":"2019-09-17T00:00:00+08:00","mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/2019/09/17/gitpages_local_debug_note.html"},"url":"http://localhost:4000/2019/09/17/gitpages_local_debug_note.html","author":{"@type":"Person","name":"沈闻欣"},"description":"之前遗留的坑","@type":"BlogPosting","headline":"Github Pages 本地调试环境搭建笔记","@context":"http://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+    <link rel="stylesheet" href="/assets/css/style.css?v=465bf7525aefa8cfd14b61544e60136c9579e120">
+    <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv.min.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1><a href="http://localhost:4000/">沈闻欣的储物间</a></h1>
+
+        
+
+        <p>我叫沈闻欣，是一名iOS开发者，目前已经从南京厚建软件离职。</p>
+
+        
+        <p class="view"><a href="https://github.com/PatShen/PatShen.github.io">View the Project on GitHub <small>PatShen/PatShen.github.io</small></a></p>
+        
+
+        
+
+        
+      </header>
+      <section>
+
+      <small>17 September 2019</small>
+<h1>Github Pages 本地调试环境搭建笔记</h1>
+
+<p class="view">by 沈闻欣</p>
+
+<h2 id="之前遗留的坑">之前遗留的坑</h2>
+
+<p>最近想把许久不更新的博客捡起来，之前就一直卡在 <code class="highlighter-rouge">gem install</code> 报的 <code class="highlighter-rouge">Gem::FilePermissionError</code> 错误上，导致无法使用 <code class="highlighter-rouge">Bundler</code> 让文章在本地预览，只能将写好的文字 push 到线上再修改…这样做的效率实在是很低，于是今天我花了一点时间来研究这个问题。</p>
+
+<p>经过查阅网上的资料，发现原来是因为 MacOS 会预装一版 Ruby，而这版 Ruby 是安装在系统文件夹中的，因此使用这版本的 Ruby ，会将安装的文件</p>
+
+<p>那么有人会想，如果使用 <code class="highlighter-rouge">sudo</code> 命令能否成功？</p>
+
+<p>我个人认为这样做可能存在一定的风险，因为使用 <code class="highlighter-rouge">sudo</code> 来执行 <code class="highlighter-rouge">gem install</code> 时，会将文件写入 <code class="highlighter-rouge">/usr/bin</code> 中，可能会造成一些无法撤销的问题。因此这里我打算采用另一种方式。</p>
+
+<h2 id="在系统中安装其他版本的-ruby">在系统中安装其他版本的 Ruby</h2>
+
+<p>一个好消息是，我们可以在同一台 Mac 中安装多个版本的 Ruby，在使用 gem install 时采用我们自己下载的 Ruby 即可。话不多说我们马上就开始下载，然后把它安装在 <code class="highlighter-rouge">/user/local</code> 路径下。</p>
+
+<p>现在市面上有多种工具可以安装，例如 <a href="#https://github.com/postmodern/chruby">chruby</a> 、 <a href="#https://github.com/postmodern/ruby-install">ruby-install</a> 、 <a href="#https://github.com/rbenv/rbenv">rbenv</a> 以及 <a href="#https://rvm.io/rvm/install">RVM</a> 等等。</p>
+
+<p>我分别使用了 <code class="highlighter-rouge">ruby-install</code> 和 <code class="highlighter-rouge">rbenv</code> 两个工具安装了目前最新的 <code class="highlighter-rouge">Ruby</code>，这两款工具安装很简单，可以很方便的在他们的 <code class="highlighter-rouge">Github</code> 主页中查到，再将稳定版本的 <code class="highlighter-rouge">Ruby</code> 安装到电脑中就可以了。</p>
+
+<p>新版本的 <code class="highlighter-rouge">Ruby</code> 安装好了之后，我们可以用 <code class="highlighter-rouge">which ruby</code> 来查看当前我们使用的 <code class="highlighter-rouge">Ruby</code> 已经不在 <code class="highlighter-rouge">/usr/bin</code> 路径下了，如果使用的是 <code class="highlighter-rouge">ruby-install</code> 安装，路径会显示为 <code class="highlighter-rouge">/usr/local/ruby</code> 如果使用的的是 <code class="highlighter-rouge">rbenv</code> 安装，路径会显示为 <code class="highlighter-rouge">/Users/{用户名}/.rbenv/shims/ruby</code>，总之现在不是在用系统预装的 <code class="highlighter-rouge">Ruby</code> ，就能使用 <code class="highlighter-rouge">gem install</code> 来安装 <code class="highlighter-rouge">Bundler</code> 了。</p>
+
+<h2 id="使用-bundler-安装-jekyll">使用 Bundler 安装 Jekyll</h2>
+
+<p>想要在本地预览博客效果，需要使用 <code class="highlighter-rouge">Gemfile</code> 的内容来构建 <code class="highlighter-rouge">Jekyll</code> 站点，此时我们需要切换到自己的 <code class="highlighter-rouge">Github Pages</code> 仓库路径下，查找 <code class="highlighter-rouge">Gemfile</code> 文件，如果没有，直接新建一个，在里面输入：</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>source 'https://rubygems.org'
+gem 'github-pages', group: :jekyll_plugins
+</code></pre></div></div>
+
+<p>因为国内访问 ruby 源的速度感人，这里可以把第一行改为</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>source 'https://gems.ruby-china.com'
+</code></pre></div></div>
+
+<p>也可以用 Bundler 的 Gem 源代码镜像命令</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ bundle config mirror.https://rubygems.org https://gems.ruby-china.com
+</code></pre></div></div>
+
+<p>这样就不用改你的 Gemfile 里的 source了</p>
+
+<p><code class="highlighter-rouge">Bundler</code> 安装完成后，切换到自己的 <code class="highlighter-rouge">Github Pages</code> 仓库路径下，通过 <code class="highlighter-rouge">Bundler</code> 来安装 <code class="highlighter-rouge">Jekyll</code> 和其他的依赖项：</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ bundle install
+</code></pre></div></div>
+
+<p>完成后，即可使用一下命令来启动本地站点服务：</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ bundle exec jekyll serve
+</code></pre></div></div>
+
+<p>服务启动后，我们可以在浏览器中输入：<code class="highlighter-rouge">http://localhost:4000</code> 来访问当前路径下对应的站点信息</p>
+
+<h2 id="参考链接">参考链接</h2>
+
+<p>https://gems.ruby-china.com</p>
+
+<p>https://help.github.com/en/articles/setting-up-your-github-pages-site-locally-with-jekyll</p>
+
+<p>https://stackoverflow.com/questions/51664716/you-dont-have-write-permissions-for-the-library-ruby-gems-2-3-0-directory</p>
+
+<p>https://www.engineyard.com/blog/how-to-install-ruby-on-a-mac-with-chruby-rbenv-or-rvm</p>
+
+
+
+  <small>tags: <em>Github</em> - <em>Pages,jekyll,gem,ruby,bundler</em></small>
+
+
+
+      </section>
+      <footer>
+        
+        <p>This project is maintained by <a href="https://github.com/PatShen">PatShen</a></p>
+        
+        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
+      </footer>
+    </div>
+    <script src="/assets/js/scale.fix.js"></script>
+    
+  </body>
+</html>
