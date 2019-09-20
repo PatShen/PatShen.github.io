@@ -5,6 +5,8 @@ tags: Github Pages,jekyll,gem,ruby,bundler
 
 ---
 
+本文主要记录了 Github Pages 搭建本地调试环境时遇到的问题以及解决方案
+
 ## 之前遗留的坑
 
 最近想把许久不更新的博客捡起来，之前就一直卡在 `gem install` 报的 `Gem::FilePermissionError` 错误上，导致无法使用 `Bundler` 让文章在本地预览，只能将写好的文字 push 到线上再修改...这样做的效率实在是很低，于是今天我花了一点时间来研究这个问题。
