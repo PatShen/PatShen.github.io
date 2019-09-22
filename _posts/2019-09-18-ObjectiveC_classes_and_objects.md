@@ -5,6 +5,9 @@ tag: Objective-C,iOS
 
 ---
 
+* TOC 
+{:toc}
+
 本文主要探究类与对象的基础知识
 
 ### 方法

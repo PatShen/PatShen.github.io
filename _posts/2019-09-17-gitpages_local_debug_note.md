@@ -4,6 +4,8 @@ title: Github Pages 本地调试环境搭建笔记
 tags: Github Pages,jekyll,gem,ruby,bundler
 
 ---
+* TOC
+{:toc}
 
 本文主要记录了 Github Pages 搭建本地调试环境时遇到的问题以及解决方案
 
