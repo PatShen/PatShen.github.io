@@ -257,17 +257,202 @@ Objective-C 程序可以在运行时加载或链接新的类（class）和类别
 
 ## 替代对象
 
+转发不仅能模拟多继承，也能使轻量级对象代表重量级对象。
 
-## 方法调用
+举个例子，有一个重量级对象，里面加入了许多大型数据，如图片视频等，每次使用这个对象的时候都需要读取磁盘上的内容，需要消耗很多时间（time-consuming），所以我们更偏向于采用懒加载模式；
 
-在 Objctive-C 中，方法的调用是在 Runtime 中通过发送消息的方式进行的，同时我们可以在 Runtime 中动态的添加变量、方法、类等，所以我们可以认为 Objective-C 是一门动态的语言。方法调用也是动态的。
+在这种情况下，我们可以通过创建一个轻量级的替代对象，利用这个替代对象我们可以让它完成一些独立的功能，而不需要初始化整个重量级对象；同时也不用担心功能缺失，因为这个轻量级对象还能够在恰当的时机将消息转发给重量级对象；当这个替代对象的 `forwardInvocation:` 方法接收到发往另一个对象的消息时，它将确保该对象存在，如果不存在就创建一个。当这个代理对象发送的消息覆盖了这个重量级对象的所有功能时，这个代理对象就相当于和重量级对象一样。
+
+## 转发和继承
+
+尽管消息转发模仿了继承，但 `NSObject` 类从不会混淆两者。像`respondsToSelector:` 和 `isKindOfClass:` 这类方法只会考虑继承体系，不会考虑转发链。例如 Warrior 对象如果被问到是否能响应 negotiate 消息：
+
+```objc
+if ( [aWarrior respondsToSelector:@selector(negotiate)] )
+    ...
+```
+
+结果是 NO，尽管它能通过接收 negotiate 消息来保证不报错，且能正常的响应，这是因为实际上它是靠转发消息给 Diplomat 类来响应的。
+
+在某些时刻，结果为 NO 是正确的，但也不是绝对的。
+
+如果您希望 Warrior 对象像他们真正继承了转发消息的 Diplomat 对象的行为一样工作，则需要重新实现 `responsToSelector:` 和 `isKindOfClass:` 方法以包括您的转发算法：
+
+```objc
+- (BOOL)respondsToSelector:(SEL)aSelector
+{
+    if ( [super respondsToSelector:aSelector] )
+        return YES;
+    else {
+        /* Here, test whether the aSelector message can     *
+         * be forwarded to another object and whether that  *
+         * object can respond to it. Return YES if it can.  */
+    }
+    return NO;
+}
+```
+
+除此之外，`instancesRespondToSelector:` 中也应该写一份转发算法。如果使用了协议，`conformsToProtocol:` 同样也要加入到这一行列中。类似地，如果一个对象转发它接受的任何远程消息，它得给出一个 `methodSignatureForSelector:` 来返回准确的方法描述，这个方法会最终响应被转发的消息。比如一个对象能给它的替代者对象转发消息，它需要像下面这样实现 `methodSignatureForSelector:` 
+
+```objc
+- (NSMethodSignature*)methodSignatureForSelector:(SEL)selector
+{
+    NSMethodSignature* signature = [super methodSignatureForSelector:selector];
+    if (!signature) {
+       signature = [surrogate methodSignatureForSelector:selector];
+    }
+    return signature;
+}
+```
+
+> 这是一个高级用法，只适用于没有其他可能解决方案的情况下使用，不建议用它来代替继承。当你使用这个方法的时候必须保证你完全熟悉类相关的行为特征以及消息转发的情况。
+
+## 类型编码
+
+为了协助 runtime 系统，编译器将每个方法的返回和参数类型编码为字符串，并将该字符串与方法选择器关联。它使用的编码方案在其他上下文中也很有用，因此可以通过 `@encode()` 编译器指令公开使用。
+
+`@encode`，@编译器指令之一，返回一个给定类型编码为一种内部表示的字符串（例如，@encode(int) -> i），类似于 ANSI C 的 typeof 操作。苹果的 Objective-C 运行时库内部利用类型编码帮助加快消息分发。
+
+例如 NSValue 中的 `+valueWithBytes:objCType:` 方法，它的第二个参数需要用 Objective-C 的编译器指令 @encode() 来创建。
+
+## 声明属性
+
+当编译器声明属性时，它会生成与封装类、类别或协议相关联的元数据，我们可以通过这些元数据使用这些属性：通过名字查看属性、得到属性的类型（ @encode 串形式）、复制出属性的相关参数（ C 语言字符串形式）列表等。
+
+### 属性类型和函数
+
+属性是由 `Property` 结构体定义的不透明的指针：
+
+```objc
+typedef struct objc_property *Property;
+```
+
+我们可以使用 `class_copyPropertyList` 和 `protocol_copyPropertyList` 这两个函数去获取和这个类（包括已经加载的分类）与协议相关的属性的列表：
+
+```objc
+objc_property_t *class_copyPropertyList(Class cls, unsigned int *outCount)
+objc_property_t *protocol_copyPropertyList(Protocol *proto, unsigned int *outCount)
+```
+
+例如，有这么一个类如下：
+
+```objc
+@interface Lender : NSObject {
+    float alone;
+}
+@property float alone;
+@end
+```
+
+此时我们可以像这样获取属性列表：
+
+```objc
+id LenderClass = objc_getClass("Lender");
+unsigned int outCount;
+objc_property_t *properties = class_copyPropertyList(LenderClass, &outCount);
+```
+
+我们可以使用 `property_getName` 这个函数去获取属性的名称：
+
+```objc
+const char *property_getName(objc_property_t property)
+```
+
+下一步，我们可以使用 `class_getProperty` 和 `protocol_getProperty` 这两个函数通过属性名称分别到类和协议中获取属性的详细信息
+
+```objc
+objc_property_t class_getProperty(Class cls, const char *name)
+objc_property_t protocol_getProperty(Protocol *proto, const char *name, BOOL isRequiredProperty, BOOL isInstanceProperty)
+```
+
+接着，我们可以通过 `property_getAttributes` 函数获取属性名称和 类型编码（@encode type）字符串
+
+```objc
+const char *property_getAttributes(objc_property_t property)
+```
+
+根据以上步骤，我们可以使用下方代码获取一个类中的所有属性的列表：
+
+```objc
+id LenderClass = objc_getClass("Lender");
+unsigned int outCount, i;
+objc_property_t *properties = class_copyPropertyList(LenderClass, &outCount);
+for (i = 0; i < outCount; i++) {
+    objc_property_t property = properties[i];
+    fprintf(stdout, "%s %s\n", property_getName(property), property_getAttributes(property));
+}
+```
+
+### 属性类型字符串
+
+我們可以用 `property_getAttributes` 函数得到属性的名字、类型编码（@encode type）字符串、以及特征。
+
+字符串以 T 开头，后面接着 @encode 类型编码，接着是逗号，接着是 V，接着是属性名，在这中间，使用下面这个表中的符号，用逗号隔开：
+
+| Code | Meaning |
+|------|---------|
+|R|只读属性（readonly）|
+|C|拷贝属性（copy）|
+|&|持有属性（retain）|
+|N|非原子性属性（nonatomic）|
+|G<属性名>|属性包含自定义 getter 方法|
+|S<属性名>|属性包含自定义 setter 方法|
+|D|属性是动态的（@dynamic）|
+|W|弱引用（__weak）|
+|P|属性符合被回收的条件|
+|t<encoding>|使用旧式编码指定类型|
+
+### 属性特征举例
+
+预先定义以下内容：
+
+```objc
+enum FooManChu { FOO, MAN, CHU };
+struct YorkshireTeaStruct { int pot; char lady; };
+typedef struct YorkshireTeaStruct YorkshireTeaStructType;
+union MoneyUnion { float alone; double down; };
+```
+
+下面的列表展示了属性声明，以及使用 `property_getAttributes:` 函数获得的返回值：
+
+|属性声明|属性描述|
+|-------|------|
+|@property char charDefault;|Tc, VcharDefault|
+|@property double doubleDefault;|Td,VdoubleDefault|
+|@property enum FooManChu enumDefault;|Ti,VenumDefault|
+|@property float floatDefault;|Tf,VfloatDefault|
+|@property int intDefault;|Ti,VintDefault|
+|@property long longDefault;|Tl,VlongDefault|
+|@property short shortDefault;|Ts,VshortDefault|
+|@property signed signedDefault;|Ti,VsignedDefault|
+|@property struct YorkshireTeaStruct structDefault;|T{YorkshireTeaStruct="pot"i"lady"c},VstructDefault|
+|@property YorkshireTeaStructType typedefDefault;|T{YorkshireTeaStruct="pot"i"lady"c},VtypedefDefault|
+|@property union MoneyUnion unionDefault;|T(MoneyUnion="alone"f"down"d),VunionDefault|
+|@property unsigned unsignedDefault;|TI,VunsignedDefault|
+|@property int (\*functionPointerDefault)(char \*);|T^?,VfunctionPointerDefault|
+|@property id idDefault; (Note: the compiler warns: "no 'assign', 'retain', or 'copy' attribute is specified - 'assign' is assumed")|T@,VidDefault|
+|@property int \*intPointer;|T^i,VintPointer|
+|@property void \*voidPointerDefault;|T^v,VvoidPointerDefault|
+|@property int intSynthEquals; In the implementation block: @synthesize intSynthEquals=_intSynthEquals;| Ti,V_intSynthEquals |
+|@property(getter=intGetFoo, setter=intSetFoo:) int intSetterGetter;|Ti,GintGetFoo,SintSetFoo:,VintSetterGetter|
+|@property(readonly) int intReadonly;|Ti,R,VintReadonly|
+|@property(getter=isIntReadOnlyGetter, readonly) int intReadonlyGetter;|Ti,R,GisIntReadOnlyGetter|
+|@property(readwrite) int intReadwrite;|Ti,VintReadwrite|
+|@property(assign) int intAssign;|Ti,VintAssign|
+|@property(retain) id idRetain;|T@,&,VidRetain|
+|@property(copy) id idCopy;|T@,C,VidCopy|
+|@property(nonatomic) int intNonatomic;|Ti,VintNonatomic|
+|@property(nonatomic, readonly, copy) id idReadonlyCopyNonatomic;|T@,R,C,VidReadonlyCopyNonatomic|
+|@property(nonatomic, readonly, retain) id idReadonlyRetainNonatomic;|T@,R,&,VidReadonlyRetainNonatomic|
+
 
 ## 参考文献/链接
 
-* [Objective-C Runtime Grograming Guide](https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/ObjCRuntimeGuide/Introduction/Introduction.html?language=objc#//apple_ref/doc/uid/TP40008048)
-* [Objective-C Runtime（玉令天下的博客）](http://yulingtianxia.com/blog/2014/11/05/objective-c-runtime/)
-* [关于Objective-C Runtime看我就够了](https://www.jianshu.com/p/f73ea068efd2)
-* [Objective-C Runtime](https://hit-alibaba.github.io/interview/iOS/ObjC-Basic/Runtime.html)
+- [Objective-C Runtime Grograming Guide](https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/ObjCRuntimeGuide/Introduction/Introduction.html?language=objc#//apple_ref/doc/uid/TP40008048)
+- [Objective-C Runtime（玉令天下的博客）](http://yulingtianxia.com/blog/2014/11/05/objective-c-runtime/)
+- [关于Objective-C Runtime看我就够了](https://www.jianshu.com/p/f73ea068efd2)
+- [Objective-C Runtime](https://hit-alibaba.github.io/interview/iOS/ObjC-Basic/Runtime.html)
+- [Type Encodings](https://www.jianshu.com/p/cb2e50362fa5)
 
 https://yangjie2.github.io/2018/10/15/深入理解Objective-C：方法调用/
 https://www.jianshu.com/p/114782a909f9
