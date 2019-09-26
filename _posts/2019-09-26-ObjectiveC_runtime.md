@@ -1,7 +1,7 @@
 ---
 layout: post
 title: Objctive-C Runtime
-tag: Objective-C,iOS,函数
+tag: Objective-C,runtime
 
 ---
 
@@ -446,6 +446,10 @@ union MoneyUnion { float alone; double down; };
 |@property(nonatomic, readonly, retain) id idReadonlyRetainNonatomic;|T@,R,&,VidReadonlyRetainNonatomic|
 
 
+## 总结
+
+在先行者们的帮助下，原本准备一两天完成这篇文章，最终花了将近一周的时间，有点超出之前的想象。对于这篇文章来说，可能暂时画上了一个句号，但对我而言这也是另一个开始，相信随着我对 Runtime 的认识更加深入，它会更加完善。
+
 ## 参考文献/链接
 
 - [Objective-C Runtime Grograming Guide](https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/ObjCRuntimeGuide/Introduction/Introduction.html?language=objc#//apple_ref/doc/uid/TP40008048)
@@ -454,7 +458,3 @@ union MoneyUnion { float alone; double down; };
 - [Objective-C Runtime](https://hit-alibaba.github.io/interview/iOS/ObjC-Basic/Runtime.html)
 - [Type Encodings](https://www.jianshu.com/p/cb2e50362fa5)
 
-https://yangjie2.github.io/2018/10/15/深入理解Objective-C：方法调用/
-https://www.jianshu.com/p/114782a909f9
-https://www.jianshu.com/p/540f3f6b6f66
-https://www.jianshu.com/p/f73ea068efd2
