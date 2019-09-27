@@ -10,7 +10,7 @@ tag: Objective-C,iOS
 
 本文主要探究类与对象的基础知识
 
-### 方法
+# 方法
 Objective-C 中有两种类型的方法：
 
 ``` objc
@@ -32,15 +32,13 @@ Objective-C 中的方法只要在 @interface 中声明，都认为是公有的�
 * Category
 * Extension
 
-有关函数和方法更多的内容，请参考：[函数和方法](/2019/09/19/ObjectiveC_functions.html)
-
-### 变量
+# 变量
 
 苹果推荐使用 `@property` 来声明成员变量，作为类的属性；被声明的成员变量会在类的内部自动创建 `getter` 和 `setter` 方法，前者用于获取该属性，后者用于修改这个属性；
 
 属性有两种修饰方式，一种是修饰 `getter` 和 `setter` 方法的原子性，另一种是设置读写属性；
 
-#### 原子性（默认值为 atomic）
+## 原子性（默认值为 atomic）
 
 * atomic : 保证属性在读写操作的原子性，它修饰的属性在读写操作完成后一定还是一个完整的属性；也就是说，它能保证读写操作的线程安全，但不能保证整个类的线程安全；
 * nonatomic : 非原子性，因此在普遍情况下，用它修饰的属性在读写时会更快；
@@ -56,7 +54,7 @@ https://www.jianshu.com/p/66b77270e363
 https://stackoverflow.com/questions/588866/whats-the-difference-between-the-atomic-and-nonatomic-attributes
 https://medium.com/@YogevSitton/atomic-vs-non-atomic-properties-crash-course-d11c23f4366c
 
-#### 读写（默认值为 readwrite assign）
+## 读写（默认值为 readwrite assign）
 
 * readwrite : 可读写；
 * readonly : 只读，只会生成 getter
@@ -73,7 +71,7 @@ https://medium.com/@YogevSitton/atomic-vs-non-atomic-properties-crash-course-d11
 ```
 这种情况下，编译器生成的 getter 方法名为 isFinished，而不是 finished。
 
-#### @synthesize 和 @dynamic
+## @synthesize 和 @dynamic
 
 * 系统默认会将属性 synthesize，生成 setter 和 getter 方法；
 * 可读写(readwrite)属性实现了自己的 getter 和 setter；
@@ -82,17 +80,17 @@ https://medium.com/@YogevSitton/atomic-vs-non-atomic-properties-crash-course-d11
 * Protocol 中定义的属性，编译器不会自动 synthesize，需要手动写；
 * 当重载父类中的属性时，也必须手动写 synthesize；
 
-### 类的扩展
+# 类的扩展
 
-#### 继承
+## 继承
 
 创建子类，继承父类的属性、方法等；
 
-#### Protocol
+## Protocol
 
 协议，类似 C++ 中的多重继承，可以让多个不同的类实现类似的接口；
 
-#### Category 
+## Category 
 
 * 可以不知晓某个类的源码、无需继承，来实现扩展其功能的效果；使用场景为将方法模块化，分别在不同的文件中实现；
 * 在使用 Category 时需要注意的一点是，如果有多个命名 Category 均实现了同一个方法（即出现了命名冲突），那么这些方法在运行时只有一个会被调用，具体哪个会被调用是不确定的。因此在给已有的类（特别是 Cocoa 类）添加 Category 时，推荐的函数命名方法是加上前缀
@@ -105,14 +103,14 @@ https://medium.com/@YogevSitton/atomic-vs-non-atomic-properties-crash-course-d11
 @end
 ```
 
-#### Extention
+## Extention
 
 * 可以认为是匿名的 Category；
 * 必须知晓类的源码；
 * Extension 声明的方法必须在类的主 @implementation 区间内实现，可以避免使用有名 Category 带来的多个不必要的 implementation 段；
 * Extension 可以在类中直接添加新的属性和实例变量，Category 需要使用其他方式才可以
 
-##### 给已有的类添加属性
+### 给已有的类添加属性
 
 Extension 可以给类添加属性，编译器会自动生成 getter，setter 和 ivar。 Category 并不支持这些。如果使用 Category 的话，类似下面这样：
 
@@ -161,21 +159,21 @@ Extension 可以给类添加属性，编译器会自动生成 getter，setter �
 @end
 ```
 
-### 类的导入
+# 类的导入
 
 * \#include: 是C/C++导入头文件的关键字
 * \#import: 是Objective-C导入头文件的关键字；头文件会自动只导入一次，不会重复导入；
 * @class: 告诉编译器需要知道某个类的声明，可以解决头文件的相互包含问题；使用时一般在 interface 中声明，需要在 .m 文件中引用该头文件；
 
-### 类的初始化
+## 类的初始化
 
 在 OC 中绝大部分类都继承自 `NSObject`，它有两个非常特殊的类方法 `load` 和 `initilize`，用于类的初始化
 
-#### +load
+### +load
 
 `load` 是在被添加到 `runtime` 时开始执行，父类最先执行，然后是子类，最后是 `Category`。又因为是直接获取函数指针来执行，不会像 `objc_msgSend` 一样会有方法查找的过程。
 
-#### +initilize
+### +initilize
 
 `initialize` 最终是通过 `objc_msgSend` 来执行的，`objc_msgSend` 会执行一系列方法查找，并且 `Category` 的方法会覆盖类中的方法。
 

@@ -1,13 +1,51 @@
 title: 沈闻欣的储物间
-# logo: /assets/img/logo.png
-description: 我叫沈闻欣，是一名iOS开发者，目前已离职。
-url: https://patshen.github.io
 author: 沈闻欣
-about: /about
+email: 386893640@qq.com
+description: > # this means to ignore newlines until "show_excerpts:"
+  我叫沈闻欣，是一名iOS开发者。
 
-show_downloads: false
-google_analytics:
-theme: jekyll-theme-minimal
-github.is_user_page: true
-paginate: 10
-markdown: kramdown
+show_excerpts: false # set to true to show excerpts on the homepage
+
+# Minima date format
+# refer to https://shopify.github.io/liquid/filters/date/ if you want to customize this
+minima:
+  date_format: "%Y-%m-%d" #"%b %-d, %Y"
+
+  # generate social links in footer
+  social_links:
+    # twitter: jekyllrb
+    github:  PatShen
+    # rss: rss
+    # dribbble: jekyll
+    # facebook: jekyll
+    # flickr:   jekyll
+    # instagram: jekyll
+    # linkedin: jekyll
+    # pinterest: jekyll
+    # youtube: jekyll
+    # youtube_channel: UC8CXR0-3I70i1tfPg1PAE1g
+    # youtube_channel_name: CloudCannon
+    # telegram: jekyll
+    # googleplus: +jekyll
+    # microdotblog: jekyll
+    # keybase: jekyll
+
+    # Mastodon instances
+    # mastodon:
+    # - username: jekyll
+    #   instance: example.com
+    # - username: jekyll2
+    #   instance: example.com
+
+# If you want to link only specific pages in your header, uncomment
+# this and add the path to the pages in order as they should show up
+header_pages:
+- about.md
+# - another-page.md
+
+# Build settings
+theme: minima
+
+plugins:
+ - jekyll-feed
+ - jekyll-seo-tag

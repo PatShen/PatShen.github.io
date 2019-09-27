@@ -1,0 +1,1282 @@
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.8.5">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2019-09-27T14:39:21+08:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">沈闻欣的储物间</title><subtitle>我叫沈闻欣，是一名iOS开发者。
+</subtitle><author><name>沈闻欣</name></author><entry><title type="html">Objctive-C Runtime</title><link href="http://localhost:4000/2019/09/26/ObjectiveC_runtime.html" rel="alternate" type="text/html" title="Objctive-C Runtime" /><published>2019-09-26T00:00:00+08:00</published><updated>2019-09-26T00:00:00+08:00</updated><id>http://localhost:4000/2019/09/26/ObjectiveC_runtime</id><content type="html" xml:base="http://localhost:4000/2019/09/26/ObjectiveC_runtime.html">&lt;ul id=&quot;markdown-toc&quot;&gt;
+  &lt;li&gt;&lt;a href=&quot;#简介&quot; id=&quot;markdown-toc-简介&quot;&gt;简介&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#runtime-版本&quot; id=&quot;markdown-toc-runtime-版本&quot;&gt;Runtime 版本&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#与-runtime-交互&quot; id=&quot;markdown-toc-与-runtime-交互&quot;&gt;与 Runtime 交互&lt;/a&gt;    &lt;ul&gt;
+      &lt;li&gt;&lt;a href=&quot;#objective-c-源代码&quot; id=&quot;markdown-toc-objective-c-源代码&quot;&gt;Objective-C 源代码&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#nsobject-方法&quot; id=&quot;markdown-toc-nsobject-方法&quot;&gt;NSObject 方法&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#runtime-函数&quot; id=&quot;markdown-toc-runtime-函数&quot;&gt;Runtime 函数&lt;/a&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#消息传递&quot; id=&quot;markdown-toc-消息传递&quot;&gt;消息传递&lt;/a&gt;    &lt;ul&gt;
+      &lt;li&gt;&lt;a href=&quot;#objc_msgsend-函数&quot; id=&quot;markdown-toc-objc_msgsend-函数&quot;&gt;objc_msgSend 函数&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#消息传递过程中的隐藏参数&quot; id=&quot;markdown-toc-消息传递过程中的隐藏参数&quot;&gt;消息传递过程中的隐藏参数&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#获取方法的地址&quot; id=&quot;markdown-toc-获取方法的地址&quot;&gt;获取方法的地址&lt;/a&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#动态方法解析&quot; id=&quot;markdown-toc-动态方法解析&quot;&gt;动态方法解析&lt;/a&gt;    &lt;ul&gt;
+      &lt;li&gt;&lt;a href=&quot;#动态方法解析-1&quot; id=&quot;markdown-toc-动态方法解析-1&quot;&gt;动态方法解析&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#动态加载&quot; id=&quot;markdown-toc-动态加载&quot;&gt;动态加载&lt;/a&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#消息转发&quot; id=&quot;markdown-toc-消息转发&quot;&gt;消息转发&lt;/a&gt;    &lt;ul&gt;
+      &lt;li&gt;&lt;a href=&quot;#转发&quot; id=&quot;markdown-toc-转发&quot;&gt;转发&lt;/a&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#转发和多继承&quot; id=&quot;markdown-toc-转发和多继承&quot;&gt;转发和多继承&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#替代对象&quot; id=&quot;markdown-toc-替代对象&quot;&gt;替代对象&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#转发和继承&quot; id=&quot;markdown-toc-转发和继承&quot;&gt;转发和继承&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#类型编码&quot; id=&quot;markdown-toc-类型编码&quot;&gt;类型编码&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#声明属性&quot; id=&quot;markdown-toc-声明属性&quot;&gt;声明属性&lt;/a&gt;    &lt;ul&gt;
+      &lt;li&gt;&lt;a href=&quot;#属性类型和函数&quot; id=&quot;markdown-toc-属性类型和函数&quot;&gt;属性类型和函数&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#属性类型字符串&quot; id=&quot;markdown-toc-属性类型字符串&quot;&gt;属性类型字符串&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#属性特征举例&quot; id=&quot;markdown-toc-属性特征举例&quot;&gt;属性特征举例&lt;/a&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#总结&quot; id=&quot;markdown-toc-总结&quot;&gt;总结&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#参考文献链接&quot; id=&quot;markdown-toc-参考文献链接&quot;&gt;参考文献/链接&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;本文主要探究函数和方法的原理和机制&lt;/p&gt;
+
+&lt;h2 id=&quot;简介&quot;&gt;简介&lt;/h2&gt;
+
+&lt;p&gt;Objective-C 语言会将编译和链接等操作尽可能的推迟到运行时，这意味着只有编译器是不够的，还需要 Runtime 作为操作系统来执行编译后的代码，这种情况下 Runtime 就充当了 Objective-C 的一种操作系统，来保证其正常运行。&lt;/p&gt;
+
+&lt;h2 id=&quot;runtime-版本&quot;&gt;Runtime 版本&lt;/h2&gt;
+
+&lt;p&gt;Runtime 有两个版本：&lt;code class=&quot;highlighter-rouge&quot;&gt;modern&lt;/code&gt; 和 &lt;code class=&quot;highlighter-rouge&quot;&gt;legacy&lt;/code&gt;：&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;modern&lt;/code&gt;: 在 Objective-C 2.0 中被引入，它被运行在 iPhone app 和 OS X v10.5 以及之后的 64 位程序中；&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;legancy&lt;/code&gt;: 运行在较早的 Mac OS 的 32 位程序之中；&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;它们的区别在于，在&lt;code class=&quot;highlighter-rouge&quot;&gt;legancy&lt;/code&gt; 版本的 runtime 中修改一个类的实例变量的布局时，还需要重新编译它的子类；而 &lt;code class=&quot;highlighter-rouge&quot;&gt;modern&lt;/code&gt; 不需要；&lt;/p&gt;
+
+&lt;h2 id=&quot;与-runtime-交互&quot;&gt;与 Runtime 交互&lt;/h2&gt;
+
+&lt;p&gt;Objective-C 与 Runtime 在三个不同的层级进行交互：通过 Objective-C 源码；通过 &lt;code class=&quot;highlighter-rouge&quot;&gt;Fundation&lt;/code&gt; 框架中 &lt;code class=&quot;highlighter-rouge&quot;&gt;NSObject&lt;/code&gt; 定义的方法；直接调用 Runtime 函数；&lt;/p&gt;
+
+&lt;h3 id=&quot;objective-c-源代码&quot;&gt;Objective-C 源代码&lt;/h3&gt;
+
+&lt;p&gt;大部分情况下，你只需写好 Objective-C 代码就行，Runtime 会自动在幕后执行它的工作；&lt;/p&gt;
+
+&lt;p&gt;当你编译一段 Objective-C 代码时，编译器会创建为实现动态语言特性而创建的数据结构和函数。它的原理实际上是通过 Objective-C 源代码调用发送消息的功能，这里面的具体内容，会在&lt;a href=&quot;#&quot;&gt;消息&lt;/a&gt;中讲到。&lt;/p&gt;
+
+&lt;h3 id=&quot;nsobject-方法&quot;&gt;NSObject 方法&lt;/h3&gt;
+
+&lt;p&gt;大部分类都是继承自 &lt;code class=&quot;highlighter-rouge&quot;&gt;NSObject&lt;/code&gt;，这样使得它们都继承了 &lt;code class=&quot;highlighter-rouge&quot;&gt;NSObject&lt;/code&gt; 中定义的方法（例外的情况是 &lt;code class=&quot;highlighter-rouge&quot;&gt;NSProxy&lt;/code&gt;，更多信息可以参见&lt;a href=&quot;#&quot;&gt;这里&lt;/a&gt;）；因此，它的方法建立了每个实例和对象的固有行为。然而在少数情况下，&lt;code class=&quot;highlighter-rouge&quot;&gt;NSObject&lt;/code&gt; 类仅仅定义了如何操作的样板，但是没有提供所有必要的代码；&lt;/p&gt;
+
+&lt;p&gt;举个例子：&lt;code class=&quot;highlighter-rouge&quot;&gt;NSObject&lt;/code&gt; 定义了 &lt;code class=&quot;highlighter-rouge&quot;&gt;description&lt;/code&gt; 这个实例方法，这个方法会返回一个用于描述这个类的字符串，它并不知道实际使用时应该如何返回，因此我们需要将这个方法重载，以返回符合具体业务的结果。&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;NSObject&lt;/code&gt; 还有一些方法能在运行时获取类的信息，并检查一些特性：比如&lt;code class=&quot;highlighter-rouge&quot;&gt;class&lt;/code&gt; 返回对象的类；&lt;code class=&quot;highlighter-rouge&quot;&gt;isKindOfClass:&lt;/code&gt; 和 &lt;code class=&quot;highlighter-rouge&quot;&gt;isMemberOfClass:&lt;/code&gt; 检查对象是否在指定的类继承体系中；&lt;code class=&quot;highlighter-rouge&quot;&gt;respondsToSelector:&lt;/code&gt; 检查对象能否可以接受特定消息；&lt;code class=&quot;highlighter-rouge&quot;&gt;conformsToProtocol:&lt;/code&gt; 检查对象是否实现了指定协议中定义的方法；&lt;code class=&quot;highlighter-rouge&quot;&gt;methodForSelector:&lt;/code&gt; 则返回指定方法实现的地址。&lt;/p&gt;
+
+&lt;h3 id=&quot;runtime-函数&quot;&gt;Runtime 函数&lt;/h3&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;Runtime&lt;/code&gt; 系统是一个由一组函数和数据结构组成、具有公共接口的动态共享库。它的头文件位于 &lt;code class=&quot;highlighter-rouge&quot;&gt;/usr/include/objc&lt;/code&gt; 目录下。许多函数允许你用纯 C 代码来重复实现 Objective-C 中同样的功能。虽然有一些方法构成了 &lt;code class=&quot;highlighter-rouge&quot;&gt;NSObject&lt;/code&gt; 类的基础，但是你在写 Objective-C 代码时一般不会直接用到这些函数的，除非是写一些 Objective-C 与其他语言的桥接或是底层的 debug 工作。在 &lt;a href=&quot;https://developer.apple.com/documentation/objectivec/objective_c_runtime&quot;&gt;Objective-C Runtime Reference&lt;/a&gt; 中有对 Runtime 函数的详细文档。&lt;/p&gt;
+
+&lt;h2 id=&quot;消息传递&quot;&gt;消息传递&lt;/h2&gt;
+
+&lt;h3 id=&quot;objc_msgsend-函数&quot;&gt;objc_msgSend 函数&lt;/h3&gt;
+
+&lt;p&gt;在 Objetcive-C 中，函数调用的写法是将对象和函数包裹在中括号中，就像：&lt;/p&gt;
+
+&lt;div class=&quot;language-objc highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;receiver&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;message&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;编译器会把它转为成一个消息函数：&lt;code class=&quot;highlighter-rouge&quot;&gt;objc_msgSend&lt;/code&gt;，它的带参数和不带参数的调用方式分别为以下两种：&lt;/p&gt;
+
+&lt;div class=&quot;language-objc highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;objc_msgSend&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;receiver&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;selector&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;div class=&quot;language-objc highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;objc_msgSend&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;receiver&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;selector&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;arg1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;arg2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;...)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;消息传递为动态绑定做了一下事项：&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;首先查找 selector 引用的方法实现；&lt;/li&gt;
+  &lt;li&gt;然后调用这个方法，同时将对象、和参数传递过去；&lt;/li&gt;
+  &lt;li&gt;最后将这个方法的返回值作为自己的返回值返回；&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;需要注意的是，这个过程是由编译器自动处理的；我们的代码无法直接执行这个过程；&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;消息传递的关键在于编译器为每个类和对象构建的结构，每个类都会包含一下两个基本元素：&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;指向超类（super class）的指针；&lt;/li&gt;
+  &lt;li&gt;一个类的调度表（dispatch table）；它可以将 selector 和 具体的方法实现联系起来；&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;创建新对象时，将为其分配内存，并初始化其实例变量。 对象变量中的第一个是指向其类结构的指针。 这个称为isa的指针使对象可以访问其类，并通过该类访问其继承的所有类。&lt;/p&gt;
+
+&lt;p&gt;当一个对象被创建、分配内存时，它的实例里的变量会初始化，里面有一个指向它的类的结构体的指针，被称作 &lt;code class=&quot;highlighter-rouge&quot;&gt;isa&lt;/code&gt; 指针，这个指针使对象可以访问它的类以及它的所有超类（父类）；&lt;/p&gt;
+
+&lt;p&gt;这些类和对象的结构图类似下图：&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/img/runtime_messaging.gif&quot; alt=&quot;Messaging Framework&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;当一条消息被发送给一个对象时，消息传递函数会跟随 isa 指针指向类结构，并且根据调度表查询方法选择器（method selector）；如果无法找到，则 objc_msgSend 将会不断指向其超类，并尝试在超类的调度表中查询方法选择器（method selector），直到查询到 NSObject 类。当找到选择器后，便调用其对应的方法，传递参数。&lt;/p&gt;
+
+&lt;p&gt;这就是在 runtime 中实现方法的方式——用面向对象编程（object-oriented programming）的术语表述就是将方法动态绑定到消息。&lt;/p&gt;
+
+&lt;p&gt;为了加快消息传递过程，运行时系统会在使用方法的选择器和地址时对其进行缓存。每个类都有单独的缓存，包含它继承的以及自身定义的 selector；实际工作过程中，会先在缓存中查询 selector，没有的话再去调度表中查询；而且如果缓存中存在被查询的 selector，它的调用速度仅仅比直接调用 runtime 函数稍慢一些；缓存在程序运行时动态增长以容纳新消息。&lt;/p&gt;
+
+&lt;h3 id=&quot;消息传递过程中的隐藏参数&quot;&gt;消息传递过程中的隐藏参数&lt;/h3&gt;
+
+&lt;p&gt;当 objc_msgSend 函数查询到实现方法的程序时，它将调用这个程序并将消息中的参数传递过去。同时也会传递两个隐藏参数：&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;接收消息的对象&lt;/li&gt;
+  &lt;li&gt;方法的选择器（selector for the method）&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;这两个参数为每个方法的实现提供调用时的相关信息，之所以称之为“隐藏”是因为没有声明这两个参数，而是在编译时直接插入到方法的实现中。&lt;/p&gt;
+
+&lt;p&gt;尽管这两个参数么有被声明，Objective-C 源码依旧能够引用它们（就像它能够引用接收对象的变量一样）。在方法内将接收对象称作 &lt;code class=&quot;highlighter-rouge&quot;&gt;self&lt;/code&gt;，自己的选择器称作 &lt;code class=&quot;highlighter-rouge&quot;&gt;_cmd&lt;/code&gt;，下面是一个这样的例子：&lt;/p&gt;
+
+&lt;div class=&quot;language-objc highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;returnType&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;strange&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;id&lt;/span&gt;  &lt;span class=&quot;n&quot;&gt;target&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;getTheReceiver&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;();&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;SEL&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;method&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;getTheMethod&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;();&lt;/span&gt;
+ 
+    &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;target&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;self&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;||&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;method&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;_cmd&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;nil&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;target&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;performSelector&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;method&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;];&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;self&lt;/code&gt; 指的是接收 &lt;code class=&quot;highlighter-rouge&quot;&gt;strange&lt;/code&gt; 方法的对象，&lt;code class=&quot;highlighter-rouge&quot;&gt;_cmd&lt;/code&gt; 指的是 &lt;code class=&quot;highlighter-rouge&quot;&gt;strange&lt;/code&gt; 方法的 selector；&lt;/p&gt;
+
+&lt;p&gt;在这两个参数中，&lt;code class=&quot;highlighter-rouge&quot;&gt;self&lt;/code&gt; 更有用。实际上，它是在方法实现中访问消息接收者对象的实例变量的途径。&lt;/p&gt;
+
+&lt;h3 id=&quot;获取方法的地址&quot;&gt;获取方法的地址&lt;/h3&gt;
+
+&lt;p&gt;规避动态绑定的唯一方法是获取方法的地址，然后直接调用它，就好像它是一个函数一样。这种做法很少用，除非是需要持续大量重复调用某方法的极端情况，避开消息发送泛滥而直接调用该方法会更高效。&lt;/p&gt;
+
+&lt;p&gt;在 &lt;code class=&quot;highlighter-rouge&quot;&gt;NSObject&lt;/code&gt; 类中定义了一个 &lt;code class=&quot;highlighter-rouge&quot;&gt;methodForSelector:&lt;/code&gt; 方法，你可以用它来获取某个方法选择器对应的 &lt;code class=&quot;highlighter-rouge&quot;&gt;IMP&lt;/code&gt;（指针），例如：&lt;/p&gt;
+
+&lt;div class=&quot;language-objc highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kt&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;setter&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;id&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;SEL&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;BOOL&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+ 
+&lt;span class=&quot;n&quot;&gt;setter&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;id&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;SEL&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;BOOL&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;target&lt;/span&gt;
+    &lt;span class=&quot;nf&quot;&gt;methodForSelector&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;@selector&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;setFilled&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:)];&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1000&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;++&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;setter&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;targetList&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;@selector&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;setFilled&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;YES&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;调用上面这个过程的前两个参数分别是接收对象（self）和方法的选择器（_cmd）；这两个参数在方法语句中被隐藏了，但是当方法作为函数被调用时必须明确存在。&lt;/p&gt;
+
+&lt;p&gt;使用 &lt;code class=&quot;highlighter-rouge&quot;&gt;methodForSelector:&lt;/code&gt; 方法绕过动态绑定的做法能够可以节省很大一部分消息发送的时间。但是只有在一个特定的消息重复许多次时，方法才会被签名认证，如上面例子中的for循环。&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;methodForSelector:&lt;/code&gt; 方法是在 Runtime 中提供的，而不是&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;h2 id=&quot;动态方法解析&quot;&gt;动态方法解析&lt;/h2&gt;
+
+&lt;h3 id=&quot;动态方法解析-1&quot;&gt;动态方法解析&lt;/h3&gt;
+
+&lt;p&gt;这部分描述了如何动态提供方法的实现；&lt;/p&gt;
+
+&lt;p&gt;有的时候我们可能需要动态的提供一个方法的实现，例如我们可以用 &lt;code class=&quot;highlighter-rouge&quot;&gt;@dynamic&lt;/code&gt; 关键字修饰一个属性：&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;@dynamic propertyName;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;这将告诉编译器我们会为这个属性动态提供存储方法；&lt;/p&gt;
+
+&lt;p&gt;我们可以重载 &lt;code class=&quot;highlighter-rouge&quot;&gt;resolveInstanceMethod:&lt;/code&gt; 和 &lt;code class=&quot;highlighter-rouge&quot;&gt;resolveClassMethod:&lt;/code&gt; 这两个方法分别添加实例方法实现和类方法实现。&lt;/p&gt;
+
+&lt;p&gt;一个 Objective-C 方法是一个至少带有两个参数 &lt;code class=&quot;highlighter-rouge&quot;&gt;self&lt;/code&gt; 和 &lt;code class=&quot;highlighter-rouge&quot;&gt;_cmd&lt;/code&gt; 的 C 函数。我们可以使用 &lt;code class=&quot;highlighter-rouge&quot;&gt;class_addMethod&lt;/code&gt; 将一个函数作为一个类的实例方法：&lt;/p&gt;
+
+&lt;div class=&quot;language-objc highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kt&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;dynamicMethodIMP&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;id&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;SEL&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;_cmd&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;c1&quot;&gt;// implementation ....
+&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;我们也可以使用 &lt;code class=&quot;highlighter-rouge&quot;&gt;resolveInstanceMethod:&lt;/code&gt; 来为一个类动态添加类方法：&lt;/p&gt;
+
+&lt;div class=&quot;language-objc highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;@implementation&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;MyClass&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;BOOL&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;resolveInstanceMethod&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;SEL&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;aSEL&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;aSEL&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;@selector&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;resolveThisMethodDynamically&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+          &lt;span class=&quot;n&quot;&gt;class_addMethod&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;([&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;self&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;class&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;aSEL&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;IMP&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;dynamicMethodIMP&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;v@:&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+          &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;YES&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;super&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;resolveInstanceMethod&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;aSEL&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;];&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;@end&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;转发方法和动态方法解析是紧密相关的，一个类在消息转发机制启动之前会动态地解析方法。调用 &lt;code class=&quot;highlighter-rouge&quot;&gt;respondsToSelector:&lt;/code&gt; 或 &lt;code class=&quot;highlighter-rouge&quot;&gt;instancesRespondToSelector:&lt;/code&gt; 时会先为 selector 提供 IMP，从而可以进行动态方法处理；如果你想让该 selector 被传送到转发机制，那么就调用 &lt;code class=&quot;highlighter-rouge&quot;&gt;resolveInstanceMethod:&lt;/code&gt; 同时让它返回 NO。&lt;/p&gt;
+
+&lt;h3 id=&quot;动态加载&quot;&gt;动态加载&lt;/h3&gt;
+
+&lt;p&gt;Objective-C 程序可以在运行时加载或链接新的类（class）和类别（categories），新加入的代码会合并进程序中，与一开始加载的类或类别同等对待。&lt;/p&gt;
+
+&lt;p&gt;动态加载可以用于很多不同的场景，例如，系统偏好设置中的各个模块正是使用了动态加载。&lt;/p&gt;
+
+&lt;p&gt;在 Cocoa 环境中，动态加载常用于应用的自定义。我们可以编写在运行时加载的模块，就像Interface Builder加载自定义选项板和OS X System Preferences应用程序加载自定义首选项模块一样。&lt;/p&gt;
+
+&lt;h2 id=&quot;消息转发&quot;&gt;消息转发&lt;/h2&gt;
+
+&lt;p&gt;向一个不处理某条消息的对象发送这条消息是错误的，如果这么做会产生一个异常，但是在这个异常生效之前，runtime 系统能够让这个对象有另一个机会来处理异常。&lt;/p&gt;
+
+&lt;h3 id=&quot;转发&quot;&gt;转发&lt;/h3&gt;
+
+&lt;p&gt;如果向一个无法处理某个消息的对象发送消息，在错误发生前 runtime 会给这个对象发送一条&lt;code class=&quot;highlighter-rouge&quot;&gt;forwardInvocation:&lt;/code&gt; 消息，这条消息中带有一个 &lt;code class=&quot;highlighter-rouge&quot;&gt;NSInvocation&lt;/code&gt; 对象作为唯一参数，这个 &lt;code class=&quot;highlighter-rouge&quot;&gt;NSInvocation&lt;/code&gt; 对象封装了原始消息以及随其传递的参数。&lt;/p&gt;
+
+&lt;p&gt;我们可以为消息实现一个 &lt;code class=&quot;highlighter-rouge&quot;&gt;forwardInvocation:&lt;/code&gt; 方法，用来返回一个默认的响应，或者用另外的方式避免报错。顾名思义，&lt;code class=&quot;highlighter-rouge&quot;&gt;forwardInvocation:&lt;/code&gt; 通常用于将消息转发到另一个对象。&lt;/p&gt;
+
+&lt;p&gt;现在可以设想一个场景，假如我们想设计一个能响应 &lt;code class=&quot;highlighter-rouge&quot;&gt;negotiate&lt;/code&gt; 方法的对象 a，而 &lt;code class=&quot;highlighter-rouge&quot;&gt;negotiate&lt;/code&gt; 方法的实现是在其他对象 b 中。我们可以通过发送 &lt;code class=&quot;highlighter-rouge&quot;&gt;negotiate&lt;/code&gt; 消息到实现这个方法的类b中去，简单地完成这个功能。&lt;/p&gt;
+
+&lt;p&gt;更进一步，假设我们想要这个对象 a 能精确地(exactly)执行 &lt;code class=&quot;highlighter-rouge&quot;&gt;negotiate&lt;/code&gt; 方法，一个方法是继承。但是它不可能在两个类的对象中传值。&lt;/p&gt;
+
+&lt;p&gt;我们可以通过实现一个方法简单地传送消息到类 b 的实例中去“借” &lt;code class=&quot;highlighter-rouge&quot;&gt;negotiate&lt;/code&gt; 方法，就像这样：&lt;/p&gt;
+
+&lt;div class=&quot;language-objc highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;id&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;negotiate&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;someOtherObject&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;respondsTo&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;@selector&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;negotiate&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)]&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;someOtherObject&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;negotiate&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;];&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;这种处理方式可能会带来一些麻烦，尤其是当我们希望将对象传递给另一个对象的消息数量很多时，此时我们就必须实现多个方法，才能涵盖我们向从另一个类中“借用”的每个方法。于此同时，如果在实际的编码过程中存在一些未知的消息，我们也无法对其作出有效的处理。更何况随着具体业务的发展，这些类在未来的某个时刻改变的几率也非常大，这样一来未知的变数就更大了。&lt;/p&gt;
+
+&lt;p&gt;而 &lt;code class=&quot;highlighter-rouge&quot;&gt;forwardInvocation:&lt;/code&gt; 就能很好的解决这个问题。它的工作机制是：当一个对象由于没有与消息中的 selector 匹配的方法而无法响应消息时，runtime 系统会通过向它发送 &lt;code class=&quot;highlighter-rouge&quot;&gt;forwardInvocation:&lt;/code&gt; 消息来告知该对象。因为绝大多数继承自 &lt;code class=&quot;highlighter-rouge&quot;&gt;NSObject&lt;/code&gt; 的类都继承了 &lt;code class=&quot;highlighter-rouge&quot;&gt;forwardInvocation:&lt;/code&gt; 方法，但是在 &lt;code class=&quot;highlighter-rouge&quot;&gt;NSObject&lt;/code&gt; 中，该方法仅仅调用了 &lt;code class=&quot;highlighter-rouge&quot;&gt;doesNotRecognizeSelector:&lt;/code&gt;，无法处理绝大多数实际的情况，此时我们需要在子类中重载 &lt;code class=&quot;highlighter-rouge&quot;&gt;forwardInvocation:&lt;/code&gt; 方法，将消息转发到其他对象中。&lt;/p&gt;
+
+&lt;p&gt;为了能够转发消息，所有的 &lt;code class=&quot;highlighter-rouge&quot;&gt;forwardInvocation:&lt;/code&gt; 方法都需要做这几件事：&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;确定消息将会被转发到哪；&lt;/li&gt;
+  &lt;li&gt;转发消息的同时需要把原始参数一并传递；&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;消息将在 &lt;code class=&quot;highlighter-rouge&quot;&gt;invokeWithTarget:&lt;/code&gt; 方法中被发送：&lt;/p&gt;
+
+&lt;div class=&quot;language-objc highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;void&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;forwardInvocation&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;NSInvocation&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;anInvocation&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;([&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;someOtherObject&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;respondsToSelector&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+            &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;anInvocation&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;selector&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]])&lt;/span&gt;
+        &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;anInvocation&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;invokeWithTarget&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;someOtherObject&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;];&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;else&lt;/span&gt;
+        &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;super&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;forwardInvocation&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;anInvocation&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;];&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;消息的返回值是返回给原始发送者的，所有类型的返回值都能够返回给发送方，包括 &lt;code class=&quot;highlighter-rouge&quot;&gt;id&lt;/code&gt;、结构体（structures）以及 &lt;code class=&quot;highlighter-rouge&quot;&gt;Double&lt;/code&gt;、&lt;code class=&quot;highlighter-rouge&quot;&gt;Float&lt;/code&gt; 等。&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;forwardInvocation:&lt;/code&gt; 方法能够扮演一个未知消息的构建中心，将它们打包到其他接收者；它也能作为一个中转站，将所有消息转发到同一目的地；它能够将一条消息转译为另一条消息，或者简单的将无法响应的消息或错误消息 “吞掉”；它能将多条消息合并为一个响应… &lt;code class=&quot;highlighter-rouge&quot;&gt;forwardInvocation:&lt;/code&gt; 方法主要面向方法实现，但是它提供的通过消息转发链链接对象的机会为程序设计带来更多可能性。&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;只有在调用了不存在的方法导致消息无法处理时才会调用 &lt;code class=&quot;highlighter-rouge&quot;&gt;forwardInvocation:&lt;/code&gt; 方法；&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;h2 id=&quot;转发和多继承&quot;&gt;转发和多继承&lt;/h2&gt;
+
+&lt;p&gt;转发和继承相似，可以用于为Objc编程添加一些多继承的效果。就像下图那样，一个对象把消息转发出去，就好似它把另一个对象中的方法借过来或是“继承”过来一样。&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/img/runtime_forwarding.gif&quot; alt=&quot;Forwarding&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;在这张图中，Warrior 类的一个对象转发了一条 &lt;code class=&quot;highlighter-rouge&quot;&gt;negotiate&lt;/code&gt; 消息到 Diplomat 类的一个对象，此时的 Warrior 对象就像 Diplomat 对象一样，它将会对 &lt;code class=&quot;highlighter-rouge&quot;&gt;negotiate&lt;/code&gt; 消息作出回应（尽管实际上是由 Diplomat 对象在处理）。&lt;/p&gt;
+
+&lt;p&gt;这使得不同继承体系分支下的两个类可以“继承”对方的方法，在上图中 Warrior 和 Diplomat 没有继承关系，但是 Warrior 将 negotiate 消息转发给了 Diplomat 后，就好似 Diplomat 是 Warrior 的超类一样。&lt;/p&gt;
+
+&lt;p&gt;消息转发提供了许多类似于多继承的特性，但是他们之间有一个很大的不同：&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;多继承：合并了不同的行为特征在一个单独的对象中，会得到一个重量级多层面的对象。&lt;/li&gt;
+  &lt;li&gt;消息转发：将各个功能分散到不同的对象中，得到的一些轻量级的对象，这些对象通过消息通过消息转发联合起来。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;替代对象&quot;&gt;替代对象&lt;/h2&gt;
+
+&lt;p&gt;转发不仅能模拟多继承，也能使轻量级对象代表重量级对象。&lt;/p&gt;
+
+&lt;p&gt;举个例子，有一个重量级对象，里面加入了许多大型数据，如图片视频等，每次使用这个对象的时候都需要读取磁盘上的内容，需要消耗很多时间（time-consuming），所以我们更偏向于采用懒加载模式；&lt;/p&gt;
+
+&lt;p&gt;在这种情况下，我们可以通过创建一个轻量级的替代对象，利用这个替代对象我们可以让它完成一些独立的功能，而不需要初始化整个重量级对象；同时也不用担心功能缺失，因为这个轻量级对象还能够在恰当的时机将消息转发给重量级对象；当这个替代对象的 &lt;code class=&quot;highlighter-rouge&quot;&gt;forwardInvocation:&lt;/code&gt; 方法接收到发往另一个对象的消息时，它将确保该对象存在，如果不存在就创建一个。当这个代理对象发送的消息覆盖了这个重量级对象的所有功能时，这个代理对象就相当于和重量级对象一样。&lt;/p&gt;
+
+&lt;h2 id=&quot;转发和继承&quot;&gt;转发和继承&lt;/h2&gt;
+
+&lt;p&gt;尽管消息转发模仿了继承，但 &lt;code class=&quot;highlighter-rouge&quot;&gt;NSObject&lt;/code&gt; 类从不会混淆两者。像&lt;code class=&quot;highlighter-rouge&quot;&gt;respondsToSelector:&lt;/code&gt; 和 &lt;code class=&quot;highlighter-rouge&quot;&gt;isKindOfClass:&lt;/code&gt; 这类方法只会考虑继承体系，不会考虑转发链。例如 Warrior 对象如果被问到是否能响应 negotiate 消息：&lt;/p&gt;
+
+&lt;div class=&quot;language-objc highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;aWarrior&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;respondsToSelector&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;@selector&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;negotiate&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)]&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;...&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;结果是 NO，尽管它能通过接收 negotiate 消息来保证不报错，且能正常的响应，这是因为实际上它是靠转发消息给 Diplomat 类来响应的。&lt;/p&gt;
+
+&lt;p&gt;在某些时刻，结果为 NO 是正确的，但也不是绝对的。&lt;/p&gt;
+
+&lt;p&gt;如果您希望 Warrior 对象像他们真正继承了转发消息的 Diplomat 对象的行为一样工作，则需要重新实现 &lt;code class=&quot;highlighter-rouge&quot;&gt;responsToSelector:&lt;/code&gt; 和 &lt;code class=&quot;highlighter-rouge&quot;&gt;isKindOfClass:&lt;/code&gt; 方法以包括您的转发算法：&lt;/p&gt;
+
+&lt;div class=&quot;language-objc highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;BOOL&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;respondsToSelector&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;SEL&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;aSelector&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;super&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;respondsToSelector&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;aSelector&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;YES&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;else&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+        &lt;span class=&quot;cm&quot;&gt;/* Here, test whether the aSelector message can     *
+         * be forwarded to another object and whether that  *
+         * object can respond to it. Return YES if it can.  */&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;NO&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;除此之外，&lt;code class=&quot;highlighter-rouge&quot;&gt;instancesRespondToSelector:&lt;/code&gt; 中也应该写一份转发算法。如果使用了协议，&lt;code class=&quot;highlighter-rouge&quot;&gt;conformsToProtocol:&lt;/code&gt; 同样也要加入到这一行列中。类似地，如果一个对象转发它接受的任何远程消息，它得给出一个 &lt;code class=&quot;highlighter-rouge&quot;&gt;methodSignatureForSelector:&lt;/code&gt; 来返回准确的方法描述，这个方法会最终响应被转发的消息。比如一个对象能给它的替代者对象转发消息，它需要像下面这样实现 &lt;code class=&quot;highlighter-rouge&quot;&gt;methodSignatureForSelector:&lt;/code&gt;&lt;/p&gt;
+
+&lt;div class=&quot;language-objc highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;NSMethodSignature&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;methodSignatureForSelector&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;SEL&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;selector&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;NSMethodSignature&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;signature&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;super&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;methodSignatureForSelector&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;selector&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;];&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;!&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;signature&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+       &lt;span class=&quot;n&quot;&gt;signature&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;surrogate&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;methodSignatureForSelector&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;selector&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;];&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;signature&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;这是一个高级用法，只适用于没有其他可能解决方案的情况下使用，不建议用它来代替继承。当你使用这个方法的时候必须保证你完全熟悉类相关的行为特征以及消息转发的情况。&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;h2 id=&quot;类型编码&quot;&gt;类型编码&lt;/h2&gt;
+
+&lt;p&gt;为了协助 runtime 系统，编译器将每个方法的返回和参数类型编码为字符串，并将该字符串与方法选择器关联。它使用的编码方案在其他上下文中也很有用，因此可以通过 &lt;code class=&quot;highlighter-rouge&quot;&gt;@encode()&lt;/code&gt; 编译器指令公开使用。&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;@encode&lt;/code&gt;，@编译器指令之一，返回一个给定类型编码为一种内部表示的字符串（例如，@encode(int) -&amp;gt; i），类似于 ANSI C 的 typeof 操作。苹果的 Objective-C 运行时库内部利用类型编码帮助加快消息分发。&lt;/p&gt;
+
+&lt;p&gt;例如 NSValue 中的 &lt;code class=&quot;highlighter-rouge&quot;&gt;+valueWithBytes:objCType:&lt;/code&gt; 方法，它的第二个参数需要用 Objective-C 的编译器指令 @encode() 来创建。&lt;/p&gt;
+
+&lt;h2 id=&quot;声明属性&quot;&gt;声明属性&lt;/h2&gt;
+
+&lt;p&gt;当编译器声明属性时，它会生成与封装类、类别或协议相关联的元数据，我们可以通过这些元数据使用这些属性：通过名字查看属性、得到属性的类型（ @encode 串形式）、复制出属性的相关参数（ C 语言字符串形式）列表等。&lt;/p&gt;
+
+&lt;h3 id=&quot;属性类型和函数&quot;&gt;属性类型和函数&lt;/h3&gt;
+
+&lt;p&gt;属性是由 &lt;code class=&quot;highlighter-rouge&quot;&gt;Property&lt;/code&gt; 结构体定义的不透明的指针：&lt;/p&gt;
+
+&lt;div class=&quot;language-objc highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;typedef&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;struct&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;objc_property&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Property&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;我们可以使用 &lt;code class=&quot;highlighter-rouge&quot;&gt;class_copyPropertyList&lt;/code&gt; 和 &lt;code class=&quot;highlighter-rouge&quot;&gt;protocol_copyPropertyList&lt;/code&gt; 这两个函数去获取和这个类（包括已经加载的分类）与协议相关的属性的列表：&lt;/p&gt;
+
+&lt;div class=&quot;language-objc highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;objc_property_t&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;class_copyPropertyList&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Class&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;cls&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;unsigned&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;outCount&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;objc_property_t&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;protocol_copyPropertyList&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Protocol&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;proto&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;unsigned&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;outCount&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;例如，有这么一个类如下：&lt;/p&gt;
+
+&lt;div class=&quot;language-objc highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;@interface&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;Lender&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;NSObject&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;kt&quot;&gt;float&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;alone&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;@property&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;float&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;alone&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;@end&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;此时我们可以像这样获取属性列表：&lt;/p&gt;
+
+&lt;div class=&quot;language-objc highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;id&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;LenderClass&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;objc_getClass&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;Lender&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;kt&quot;&gt;unsigned&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;outCount&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;objc_property_t&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;properties&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;class_copyPropertyList&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;LenderClass&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;outCount&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;我们可以使用 &lt;code class=&quot;highlighter-rouge&quot;&gt;property_getName&lt;/code&gt; 这个函数去获取属性的名称：&lt;/p&gt;
+
+&lt;div class=&quot;language-objc highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;char&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;property_getName&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;objc_property_t&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;property&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;下一步，我们可以使用 &lt;code class=&quot;highlighter-rouge&quot;&gt;class_getProperty&lt;/code&gt; 和 &lt;code class=&quot;highlighter-rouge&quot;&gt;protocol_getProperty&lt;/code&gt; 这两个函数通过属性名称分别到类和协议中获取属性的详细信息&lt;/p&gt;
+
+&lt;div class=&quot;language-objc highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;objc_property_t&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;class_getProperty&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Class&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;cls&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;char&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;objc_property_t&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;protocol_getProperty&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Protocol&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;proto&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;char&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;BOOL&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;isRequiredProperty&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;BOOL&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;isInstanceProperty&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;接着，我们可以通过 &lt;code class=&quot;highlighter-rouge&quot;&gt;property_getAttributes&lt;/code&gt; 函数获取属性名称和 类型编码（@encode type）字符串&lt;/p&gt;
+
+&lt;div class=&quot;language-objc highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;char&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;property_getAttributes&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;objc_property_t&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;property&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;根据以上步骤，我们可以使用下方代码获取一个类中的所有属性的列表：&lt;/p&gt;
+
+&lt;div class=&quot;language-objc highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;id&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;LenderClass&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;objc_getClass&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;Lender&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;kt&quot;&gt;unsigned&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;outCount&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;objc_property_t&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;properties&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;class_copyPropertyList&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;LenderClass&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;outCount&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;outCount&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;++&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;objc_property_t&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;property&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;properties&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;];&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;fprintf&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;stdout&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;%s %s&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\n&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;property_getName&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;property&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;property_getAttributes&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;property&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;));&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;属性类型字符串&quot;&gt;属性类型字符串&lt;/h3&gt;
+
+&lt;p&gt;我們可以用 &lt;code class=&quot;highlighter-rouge&quot;&gt;property_getAttributes&lt;/code&gt; 函数得到属性的名字、类型编码（@encode type）字符串、以及特征。&lt;/p&gt;
+
+&lt;p&gt;字符串以 T 开头，后面接着 @encode 类型编码，接着是逗号，接着是 V，接着是属性名，在这中间，使用下面这个表中的符号，用逗号隔开：&lt;/p&gt;
+
+&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th&gt;Code&lt;/th&gt;
+      &lt;th&gt;Meaning&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;R&lt;/td&gt;
+      &lt;td&gt;只读属性（readonly）&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;C&lt;/td&gt;
+      &lt;td&gt;拷贝属性（copy）&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;&amp;amp;&lt;/td&gt;
+      &lt;td&gt;持有属性（retain）&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;N&lt;/td&gt;
+      &lt;td&gt;非原子性属性（nonatomic）&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;G&lt;属性名&gt;&lt;/属性名&gt;&lt;/td&gt;
+      &lt;td&gt;属性包含自定义 getter 方法&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;S&lt;属性名&gt;&lt;/属性名&gt;&lt;/td&gt;
+      &lt;td&gt;属性包含自定义 setter 方法&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;D&lt;/td&gt;
+      &lt;td&gt;属性是动态的（@dynamic）&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;W&lt;/td&gt;
+      &lt;td&gt;弱引用（__weak）&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;P&lt;/td&gt;
+      &lt;td&gt;属性符合被回收的条件&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;t&lt;encoding&gt;&lt;/encoding&gt;&lt;/td&gt;
+      &lt;td&gt;使用旧式编码指定类型&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;h3 id=&quot;属性特征举例&quot;&gt;属性特征举例&lt;/h3&gt;
+
+&lt;p&gt;预先定义以下内容：&lt;/p&gt;
+
+&lt;div class=&quot;language-objc highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;enum&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;FooManChu&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;FOO&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;MAN&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;CHU&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;};&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;struct&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;YorkshireTeaStruct&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;pot&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;char&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;lady&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;};&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;typedef&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;struct&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;YorkshireTeaStruct&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;YorkshireTeaStructType&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;union&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;MoneyUnion&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;float&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;alone&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;double&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;down&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;};&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;下面的列表展示了属性声明，以及使用 &lt;code class=&quot;highlighter-rouge&quot;&gt;property_getAttributes:&lt;/code&gt; 函数获得的返回值：&lt;/p&gt;
+
+&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th&gt;属性声明&lt;/th&gt;
+      &lt;th&gt;属性描述&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;@property char charDefault;&lt;/td&gt;
+      &lt;td&gt;Tc, VcharDefault&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;@property double doubleDefault;&lt;/td&gt;
+      &lt;td&gt;Td,VdoubleDefault&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;@property enum FooManChu enumDefault;&lt;/td&gt;
+      &lt;td&gt;Ti,VenumDefault&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;@property float floatDefault;&lt;/td&gt;
+      &lt;td&gt;Tf,VfloatDefault&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;@property int intDefault;&lt;/td&gt;
+      &lt;td&gt;Ti,VintDefault&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;@property long longDefault;&lt;/td&gt;
+      &lt;td&gt;Tl,VlongDefault&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;@property short shortDefault;&lt;/td&gt;
+      &lt;td&gt;Ts,VshortDefault&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;@property signed signedDefault;&lt;/td&gt;
+      &lt;td&gt;Ti,VsignedDefault&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;@property struct YorkshireTeaStruct structDefault;&lt;/td&gt;
+      &lt;td&gt;T{YorkshireTeaStruct=”pot”i”lady”c},VstructDefault&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;@property YorkshireTeaStructType typedefDefault;&lt;/td&gt;
+      &lt;td&gt;T{YorkshireTeaStruct=”pot”i”lady”c},VtypedefDefault&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;@property union MoneyUnion unionDefault;&lt;/td&gt;
+      &lt;td&gt;T(MoneyUnion=”alone”f”down”d),VunionDefault&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;@property unsigned unsignedDefault;&lt;/td&gt;
+      &lt;td&gt;TI,VunsignedDefault&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;@property int (*functionPointerDefault)(char *);&lt;/td&gt;
+      &lt;td&gt;T^?,VfunctionPointerDefault&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;@property id idDefault; (Note: the compiler warns: “no ‘assign’, ‘retain’, or ‘copy’ attribute is specified - ‘assign’ is assumed”)&lt;/td&gt;
+      &lt;td&gt;T@,VidDefault&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;@property int *intPointer;&lt;/td&gt;
+      &lt;td&gt;T^i,VintPointer&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;@property void *voidPointerDefault;&lt;/td&gt;
+      &lt;td&gt;T^v,VvoidPointerDefault&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;@property int intSynthEquals; In the implementation block: @synthesize intSynthEquals=_intSynthEquals;&lt;/td&gt;
+      &lt;td&gt;Ti,V_intSynthEquals&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;@property(getter=intGetFoo, setter=intSetFoo:) int intSetterGetter;&lt;/td&gt;
+      &lt;td&gt;Ti,GintGetFoo,SintSetFoo:,VintSetterGetter&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;@property(readonly) int intReadonly;&lt;/td&gt;
+      &lt;td&gt;Ti,R,VintReadonly&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;@property(getter=isIntReadOnlyGetter, readonly) int intReadonlyGetter;&lt;/td&gt;
+      &lt;td&gt;Ti,R,GisIntReadOnlyGetter&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;@property(readwrite) int intReadwrite;&lt;/td&gt;
+      &lt;td&gt;Ti,VintReadwrite&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;@property(assign) int intAssign;&lt;/td&gt;
+      &lt;td&gt;Ti,VintAssign&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;@property(retain) id idRetain;&lt;/td&gt;
+      &lt;td&gt;T@,&amp;amp;,VidRetain&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;@property(copy) id idCopy;&lt;/td&gt;
+      &lt;td&gt;T@,C,VidCopy&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;@property(nonatomic) int intNonatomic;&lt;/td&gt;
+      &lt;td&gt;Ti,VintNonatomic&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;@property(nonatomic, readonly, copy) id idReadonlyCopyNonatomic;&lt;/td&gt;
+      &lt;td&gt;T@,R,C,VidReadonlyCopyNonatomic&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;@property(nonatomic, readonly, retain) id idReadonlyRetainNonatomic;&lt;/td&gt;
+      &lt;td&gt;T@,R,&amp;amp;,VidReadonlyRetainNonatomic&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;h2 id=&quot;总结&quot;&gt;总结&lt;/h2&gt;
+
+&lt;p&gt;在先行者们的帮助下，原本准备一两天完成这篇文章，最终花了将近一周的时间，有点超出之前的想象。对于这篇文章来说，可能暂时画上了一个句号，但对我而言这也是另一个开始，相信随着我对 Runtime 的认识更加深入，它会更加完善。&lt;/p&gt;
+
+&lt;h2 id=&quot;参考文献链接&quot;&gt;参考文献/链接&lt;/h2&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/ObjCRuntimeGuide/Introduction/Introduction.html?language=objc#//apple_ref/doc/uid/TP40008048&quot;&gt;Objective-C Runtime Grograming Guide&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;http://yulingtianxia.com/blog/2014/11/05/objective-c-runtime/&quot;&gt;Objective-C Runtime（玉令天下的博客）&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://www.jianshu.com/p/f73ea068efd2&quot;&gt;关于Objective-C Runtime看我就够了&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://hit-alibaba.github.io/interview/iOS/ObjC-Basic/Runtime.html&quot;&gt;Objective-C Runtime&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://www.jianshu.com/p/cb2e50362fa5&quot;&gt;Type Encodings&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;</content><author><name>沈闻欣</name></author><category term="Objective-C,runtime" /><summary type="html"></summary></entry><entry><title type="html">Github Pages 的 markdown 文档中自动生成索引</title><link href="http://localhost:4000/2019/09/22/githubpages_toc.html" rel="alternate" type="text/html" title="Github Pages 的 markdown 文档中自动生成索引" /><published>2019-09-22T00:00:00+08:00</published><updated>2019-09-22T00:00:00+08:00</updated><id>http://localhost:4000/2019/09/22/githubpages_toc</id><content type="html" xml:base="http://localhost:4000/2019/09/22/githubpages_toc.html">&lt;ul id=&quot;markdown-toc&quot;&gt;
+  &lt;li&gt;&lt;a href=&quot;#背景&quot; id=&quot;markdown-toc-背景&quot;&gt;背景&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#探索&quot; id=&quot;markdown-toc-探索&quot;&gt;探索&lt;/a&gt;    &lt;ul&gt;
+      &lt;li&gt;&lt;a href=&quot;#原理&quot; id=&quot;markdown-toc-原理&quot;&gt;原理&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#实现&quot; id=&quot;markdown-toc-实现&quot;&gt;实现&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#特殊情况&quot; id=&quot;markdown-toc-特殊情况&quot;&gt;特殊情况&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#实例介绍&quot; id=&quot;markdown-toc-实例介绍&quot;&gt;实例介绍&lt;/a&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#参考链接&quot; id=&quot;markdown-toc-参考链接&quot;&gt;参考链接&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;背景&quot;&gt;背景&lt;/h2&gt;
+
+&lt;p&gt;所谓的 &lt;code class=&quot;highlighter-rouge&quot;&gt;自动生成索引&lt;/code&gt; 在 markdown 中指的是 &lt;code class=&quot;highlighter-rouge&quot;&gt;TOC(Table of Contents)&lt;/code&gt;，我们知道，在 markdown 语法中可以使用 &lt;code class=&quot;highlighter-rouge&quot;&gt;#&lt;/code&gt; 表示一级标题，&lt;code class=&quot;highlighter-rouge&quot;&gt;##&lt;/code&gt; 表示二级标题，以此类推…&lt;/p&gt;
+
+&lt;p&gt;通过 &lt;code class=&quot;highlighter-rouge&quot;&gt;TOC&lt;/code&gt; 可以让我们在文章的开头就把文章中的标题单独显示出来。这个特性可以帮助读者更好的理解文章的结构，从而更好的理解作者的文章内容。&lt;/p&gt;
+
+&lt;p&gt;现在市面上很多使用 &lt;code class=&quot;highlighter-rouge&quot;&gt;markdown&lt;/code&gt; 作为文档的网站都支持 &lt;code class=&quot;highlighter-rouge&quot;&gt;TOC&lt;/code&gt; ，但是使用 &lt;code class=&quot;highlighter-rouge&quot;&gt;jekyll&lt;/code&gt; 生成的 &lt;code class=&quot;highlighter-rouge&quot;&gt;Github Pages&lt;/code&gt; 并不支持这一特性，这让很多像笔者一样的使用 &lt;code class=&quot;highlighter-rouge&quot;&gt;jekyll&lt;/code&gt; 生成博客的作者很是苦恼。&lt;/p&gt;
+
+&lt;h2 id=&quot;探索&quot;&gt;探索&lt;/h2&gt;
+
+&lt;p&gt;那么有没有什么方法可以让使用 &lt;code class=&quot;highlighter-rouge&quot;&gt;jekyll&lt;/code&gt; 的 &lt;code class=&quot;highlighter-rouge&quot;&gt;Github Pages&lt;/code&gt; 也支持 &lt;code class=&quot;highlighter-rouge&quot;&gt;TOC&lt;/code&gt; 特性吗？&lt;/p&gt;
+
+&lt;h3 id=&quot;原理&quot;&gt;原理&lt;/h3&gt;
+
+&lt;p&gt;经过查阅资料，我们发现 &lt;code class=&quot;highlighter-rouge&quot;&gt;jekyll&lt;/code&gt; 默认使用 &lt;code class=&quot;highlighter-rouge&quot;&gt;Kramdown&lt;/code&gt; 来解析 &lt;code class=&quot;highlighter-rouge&quot;&gt;markdown&lt;/code&gt; 并且将其转换成 &lt;code class=&quot;highlighter-rouge&quot;&gt;HTML&lt;/code&gt; 页面。&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;Kramdown&lt;/code&gt; 在转换时默认会将标题生成一个对应的 ID，同时也会将自动生成的 ID 添加到索引中。&lt;/p&gt;
+
+&lt;p&gt;有关 &lt;code class=&quot;highlighter-rouge&quot;&gt;Kramdown&lt;/code&gt; 自动生成 ID 的规则以及 ID 对应的顶部索引，可以在 &lt;a href=&quot;https://kramdown.gettalong.org/converter/html.html#auto-ids&quot;&gt;Automatic Generation of Header IDs&lt;/a&gt; 和 &lt;a href=&quot;https://kramdown.gettalong.org/converter/html.html#toc&quot;&gt;Automatic “Table of Contents” Generation&lt;/a&gt; 查询到。&lt;/p&gt;
+
+&lt;h3 id=&quot;实现&quot;&gt;实现&lt;/h3&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;Kramdown&lt;/code&gt; 索引支持 &lt;code class=&quot;highlighter-rouge&quot;&gt;有序列表&lt;/code&gt; 和 &lt;code class=&quot;highlighter-rouge&quot;&gt;无序列表&lt;/code&gt; 两种表现形式，实际使用时，只需要将以下格式添加到自己的文章中，格式如下：&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;1. 有序列表（此处可写任意字符串）
+{:toc}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;* 无序列表（此处可写任意字符串）
+{:toc}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;特殊情况&quot;&gt;特殊情况&lt;/h3&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;Kramdown&lt;/code&gt; 也支持不将某些标题显示在索引上，此时只需要在 &lt;code class=&quot;highlighter-rouge&quot;&gt;该标题&lt;/code&gt; 下方加上 &lt;code class=&quot;highlighter-rouge&quot;&gt;{:.no_toc}&lt;/code&gt; 即可。&lt;/p&gt;
+
+&lt;h3 id=&quot;实例介绍&quot;&gt;实例介绍&lt;/h3&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;* toc
+{:toc}
+
+# 一号标题
+
+## 二号标题
+
+### 三号标题
+{:.no_toc}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;参考链接&quot;&gt;参考链接&lt;/h2&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://stackoverflow.com/questions/54243424/how-to-generate-a-table-of-contents-toc-on-a-rendered-github-pages-readme-md&quot;&gt;How to generate a Table of Contents (ToC) on a rendered Github Pages README.md?&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://jekyllrb.com/docs/configuration/markdown/&quot;&gt;Jekyll Markdown Options&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;http://www.seanbuscay.com/blog/jekyll-toc-markdown/&quot;&gt;How I Add a Table of Contents to my Jekyll Blog Written in Markdown&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://kramdown.gettalong.org/converter/html.html&quot;&gt;Kramdown HTML Converter&lt;/a&gt;&lt;/p&gt;</content><author><name>沈闻欣</name></author><category term="markdown, kramdown, toc, github pages, jekyll" /><summary type="html"></summary></entry><entry><title type="html">Objective-C 的类与对象</title><link href="http://localhost:4000/2019/09/18/ObjectiveC_classes_and_objects.html" rel="alternate" type="text/html" title="Objective-C 的类与对象" /><published>2019-09-18T00:00:00+08:00</published><updated>2019-09-18T00:00:00+08:00</updated><id>http://localhost:4000/2019/09/18/ObjectiveC_classes_and_objects</id><content type="html" xml:base="http://localhost:4000/2019/09/18/ObjectiveC_classes_and_objects.html">&lt;ul id=&quot;markdown-toc&quot;&gt;
+  &lt;li&gt;&lt;a href=&quot;#方法&quot; id=&quot;markdown-toc-方法&quot;&gt;方法&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#变量&quot; id=&quot;markdown-toc-变量&quot;&gt;变量&lt;/a&gt;    &lt;ul&gt;
+      &lt;li&gt;&lt;a href=&quot;#原子性默认值为-atomic&quot; id=&quot;markdown-toc-原子性默认值为-atomic&quot;&gt;原子性（默认值为 atomic）&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#读写默认值为-readwrite-assign&quot; id=&quot;markdown-toc-读写默认值为-readwrite-assign&quot;&gt;读写（默认值为 readwrite assign）&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#synthesize-和-dynamic&quot; id=&quot;markdown-toc-synthesize-和-dynamic&quot;&gt;@synthesize 和 @dynamic&lt;/a&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#类的扩展&quot; id=&quot;markdown-toc-类的扩展&quot;&gt;类的扩展&lt;/a&gt;    &lt;ul&gt;
+      &lt;li&gt;&lt;a href=&quot;#继承&quot; id=&quot;markdown-toc-继承&quot;&gt;继承&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#protocol&quot; id=&quot;markdown-toc-protocol&quot;&gt;Protocol&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#category&quot; id=&quot;markdown-toc-category&quot;&gt;Category&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#extention&quot; id=&quot;markdown-toc-extention&quot;&gt;Extention&lt;/a&gt;        &lt;ul&gt;
+          &lt;li&gt;&lt;a href=&quot;#给已有的类添加属性&quot; id=&quot;markdown-toc-给已有的类添加属性&quot;&gt;给已有的类添加属性&lt;/a&gt;&lt;/li&gt;
+        &lt;/ul&gt;
+      &lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#类的导入&quot; id=&quot;markdown-toc-类的导入&quot;&gt;类的导入&lt;/a&gt;    &lt;ul&gt;
+      &lt;li&gt;&lt;a href=&quot;#类的初始化&quot; id=&quot;markdown-toc-类的初始化&quot;&gt;类的初始化&lt;/a&gt;        &lt;ul&gt;
+          &lt;li&gt;&lt;a href=&quot;#load&quot; id=&quot;markdown-toc-load&quot;&gt;+load&lt;/a&gt;&lt;/li&gt;
+          &lt;li&gt;&lt;a href=&quot;#initilize&quot; id=&quot;markdown-toc-initilize&quot;&gt;+initilize&lt;/a&gt;&lt;/li&gt;
+        &lt;/ul&gt;
+      &lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;本文主要探究类与对象的基础知识&lt;/p&gt;
+
+&lt;h1 id=&quot;方法&quot;&gt;方法&lt;/h1&gt;
+&lt;p&gt;Objective-C 中有两种类型的方法：&lt;/p&gt;
+
+&lt;div class=&quot;language-objc highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;@interface&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;AClass&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;NSObject&lt;/span&gt; 
+&lt;span class=&quot;c1&quot;&gt;// 类方法
+&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;void&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;classMethod&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;c1&quot;&gt;// 实例方法
+&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;void&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;instanceMethod&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;@end&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;类方法&lt;/code&gt;又称作&lt;code class=&quot;highlighter-rouge&quot;&gt;静态方法&lt;/code&gt;，可以不用创建对象来调用；而&lt;code class=&quot;highlighter-rouge&quot;&gt;实例方法&lt;/code&gt;必须通过实例对象调用；&lt;/p&gt;
+
+&lt;p&gt;Objective-C 中的方法只要在 @interface 中声明，都认为是公有的；它没有绝对私有的方法，只能将方法隐藏；&lt;/p&gt;
+
+&lt;p&gt;隐藏方法的方式：&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;在 @implementation 中声明&lt;/li&gt;
+  &lt;li&gt;Category&lt;/li&gt;
+  &lt;li&gt;Extension&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h1 id=&quot;变量&quot;&gt;变量&lt;/h1&gt;
+
+&lt;p&gt;苹果推荐使用 &lt;code class=&quot;highlighter-rouge&quot;&gt;&lt;span class=&quot;k&quot;&gt;@property&lt;/span&gt;&lt;/code&gt; 来声明成员变量，作为类的属性；被声明的成员变量会在类的内部自动创建 &lt;code class=&quot;highlighter-rouge&quot;&gt;getter&lt;/code&gt; 和 &lt;code class=&quot;highlighter-rouge&quot;&gt;setter&lt;/code&gt; 方法，前者用于获取该属性，后者用于修改这个属性；&lt;/p&gt;
+
+&lt;p&gt;属性有两种修饰方式，一种是修饰 &lt;code class=&quot;highlighter-rouge&quot;&gt;getter&lt;/code&gt; 和 &lt;code class=&quot;highlighter-rouge&quot;&gt;setter&lt;/code&gt; 方法的原子性，另一种是设置读写属性；&lt;/p&gt;
+
+&lt;h2 id=&quot;原子性默认值为-atomic&quot;&gt;原子性（默认值为 atomic）&lt;/h2&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;atomic : 保证属性在读写操作的原子性，它修饰的属性在读写操作完成后一定还是一个完整的属性；也就是说，它能保证读写操作的线程安全，但不能保证整个类的线程安全；&lt;/li&gt;
+  &lt;li&gt;nonatomic : 非原子性，因此在普遍情况下，用它修饰的属性在读写时会更快；&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;1.如果想要保证多线程下属性赋值的安全性，需要借助其他手段来实现；&lt;/p&gt;
+
+  &lt;p&gt;2.Swift 中默认为 atomic，且无法修改；如果一个类在 OC 中定义，它的属性在 Swift 中运行时，会被修饰为 &lt;code class=&quot;highlighter-rouge&quot;&gt;atomic&lt;/code&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;参考链接&lt;/p&gt;
+
+&lt;p&gt;https://www.jianshu.com/p/7288eacbb1a2
+https://www.jianshu.com/p/66b77270e363
+https://stackoverflow.com/questions/588866/whats-the-difference-between-the-atomic-and-nonatomic-attributes
+https://medium.com/@YogevSitton/atomic-vs-non-atomic-properties-crash-course-d11c23f4366c&lt;/p&gt;
+
+&lt;h2 id=&quot;读写默认值为-readwrite-assign&quot;&gt;读写（默认值为 readwrite assign）&lt;/h2&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;readwrite : 可读写；&lt;/li&gt;
+  &lt;li&gt;readonly : 只读，只会生成 getter&lt;/li&gt;
+  &lt;li&gt;assign : 赋值；&lt;/li&gt;
+  &lt;li&gt;retain : MRC 下的持有，setter 方法将传入参数先保留，再赋值，传入参数的 retain count 会+1; ARC 下也能用，但不建议；&lt;/li&gt;
+  &lt;li&gt;strong : ARC 独有，强引用，除非引用它的对象被释放，否则被强引用的对象将不会被释放；&lt;/li&gt;
+  &lt;li&gt;weak : ARC 独有，弱引用，被它修饰的属性遵循自身的释放流程，与引用它的对象释放与否无关；&lt;/li&gt;
+  &lt;li&gt;copy : 拷贝，setter 方法将传入对象复制一份；&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;同时，我们还可以使用自己定义 accessor 的名字：&lt;/p&gt;
+
+&lt;div class=&quot;language-objc highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;@property&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;getter&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;isFinished&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;BOOL&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;finished&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;这种情况下，编译器生成的 getter 方法名为 isFinished，而不是 finished。&lt;/p&gt;
+
+&lt;h2 id=&quot;synthesize-和-dynamic&quot;&gt;@synthesize 和 @dynamic&lt;/h2&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;系统默认会将属性 synthesize，生成 setter 和 getter 方法；&lt;/li&gt;
+  &lt;li&gt;可读写(readwrite)属性实现了自己的 getter 和 setter；&lt;/li&gt;
+  &lt;li&gt;只读(readonly)属性实现了自己的 getter；&lt;/li&gt;
+  &lt;li&gt;使用 @dynamic，显式表示不希望编译器生成 getter 和 setter （例如 CoreData 中的对象）；&lt;/li&gt;
+  &lt;li&gt;Protocol 中定义的属性，编译器不会自动 synthesize，需要手动写；&lt;/li&gt;
+  &lt;li&gt;当重载父类中的属性时，也必须手动写 synthesize；&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h1 id=&quot;类的扩展&quot;&gt;类的扩展&lt;/h1&gt;
+
+&lt;h2 id=&quot;继承&quot;&gt;继承&lt;/h2&gt;
+
+&lt;p&gt;创建子类，继承父类的属性、方法等；&lt;/p&gt;
+
+&lt;h2 id=&quot;protocol&quot;&gt;Protocol&lt;/h2&gt;
+
+&lt;p&gt;协议，类似 C++ 中的多重继承，可以让多个不同的类实现类似的接口；&lt;/p&gt;
+
+&lt;h2 id=&quot;category&quot;&gt;Category&lt;/h2&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;可以不知晓某个类的源码、无需继承，来实现扩展其功能的效果；使用场景为将方法模块化，分别在不同的文件中实现；&lt;/li&gt;
+  &lt;li&gt;在使用 Category 时需要注意的一点是，如果有多个命名 Category 均实现了同一个方法（即出现了命名冲突），那么这些方法在运行时只有一个会被调用，具体哪个会被调用是不确定的。因此在给已有的类（特别是 Cocoa 类）添加 Category 时，推荐的函数命名方法是加上前缀&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;div class=&quot;language-objc highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;@interface&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;NSString&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;ABCEmpty&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;BOOL&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;abc_isEmpty&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;@end&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;extention&quot;&gt;Extention&lt;/h2&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;可以认为是匿名的 Category；&lt;/li&gt;
+  &lt;li&gt;必须知晓类的源码；&lt;/li&gt;
+  &lt;li&gt;Extension 声明的方法必须在类的主 @implementation 区间内实现，可以避免使用有名 Category 带来的多个不必要的 implementation 段；&lt;/li&gt;
+  &lt;li&gt;Extension 可以在类中直接添加新的属性和实例变量，Category 需要使用其他方式才可以&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;给已有的类添加属性&quot;&gt;给已有的类添加属性&lt;/h3&gt;
+
+&lt;p&gt;Extension 可以给类添加属性，编译器会自动生成 getter，setter 和 ivar。 Category 并不支持这些。如果使用 Category 的话，类似下面这样：&lt;/p&gt;
+
+&lt;div class=&quot;language-objc highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;@interface&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;XYZPerson&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;UDID&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;@property&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;readwrite&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;NSString&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;uniqueIdentifier&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;@end&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;@implementation&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;XYZPerson&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;UDID&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;...&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;@end&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;尽管编译可以通过，但是当真正使用 uniqueIdentifier 时直接会导致程序崩溃。&lt;/p&gt;
+
+&lt;p&gt;如果我们手动去 synthesize 呢？像下面这样：&lt;/p&gt;
+
+&lt;div class=&quot;language-objc highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;@implementation&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;XYZPerson&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;UDID&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;@synthesize&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;uniqueIdentifier&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;...&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;@end&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;然而这样做的话，代码直接报编译错误了：&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;@synthesize not allowed in a category's implementation
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;经过查阅网上资料，我们可以用 OC 的 Runtime 机制来实现这样的效果&lt;/p&gt;
+
+&lt;div class=&quot;language-objc highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;
+&lt;span class=&quot;k&quot;&gt;@implementation&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;XYZPerson&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;UDID&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;@dynamic&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;uniqueIdentifier&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;void&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;setUniqueIdentifier&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;NSString&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;identifier&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+     &lt;span class=&quot;n&quot;&gt;objc_setAssociatedObject&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;@selector&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;uniqueIdentifier&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;identifier&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;OBJC_ASSOCIATION_RETAIN_NONATOMIC&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;NSString&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;uniqueIdentifier&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;objc_getAssociatedObject&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;@selector&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;uniqueIdentifier&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;));&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;...&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;@end&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h1 id=&quot;类的导入&quot;&gt;类的导入&lt;/h1&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;#include: 是C/C++导入头文件的关键字&lt;/li&gt;
+  &lt;li&gt;#import: 是Objective-C导入头文件的关键字；头文件会自动只导入一次，不会重复导入；&lt;/li&gt;
+  &lt;li&gt;@class: 告诉编译器需要知道某个类的声明，可以解决头文件的相互包含问题；使用时一般在 interface 中声明，需要在 .m 文件中引用该头文件；&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;类的初始化&quot;&gt;类的初始化&lt;/h2&gt;
+
+&lt;p&gt;在 OC 中绝大部分类都继承自 &lt;code class=&quot;highlighter-rouge&quot;&gt;NSObject&lt;/code&gt;，它有两个非常特殊的类方法 &lt;code class=&quot;highlighter-rouge&quot;&gt;load&lt;/code&gt; 和 &lt;code class=&quot;highlighter-rouge&quot;&gt;initilize&lt;/code&gt;，用于类的初始化&lt;/p&gt;
+
+&lt;h3 id=&quot;load&quot;&gt;+load&lt;/h3&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;load&lt;/code&gt; 是在被添加到 &lt;code class=&quot;highlighter-rouge&quot;&gt;runtime&lt;/code&gt; 时开始执行，父类最先执行，然后是子类，最后是 &lt;code class=&quot;highlighter-rouge&quot;&gt;Category&lt;/code&gt;。又因为是直接获取函数指针来执行，不会像 &lt;code class=&quot;highlighter-rouge&quot;&gt;objc_msgSend&lt;/code&gt; 一样会有方法查找的过程。&lt;/p&gt;
+
+&lt;h3 id=&quot;initilize&quot;&gt;+initilize&lt;/h3&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;initialize&lt;/code&gt; 最终是通过 &lt;code class=&quot;highlighter-rouge&quot;&gt;objc_msgSend&lt;/code&gt; 来执行的，&lt;code class=&quot;highlighter-rouge&quot;&gt;objc_msgSend&lt;/code&gt; 会执行一系列方法查找，并且 &lt;code class=&quot;highlighter-rouge&quot;&gt;Category&lt;/code&gt; 的方法会覆盖类中的方法。&lt;/p&gt;
+
+&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th&gt; &lt;/th&gt;
+      &lt;th&gt;+load&lt;/th&gt;
+      &lt;th&gt;+initialize&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;调用时机&lt;/td&gt;
+      &lt;td&gt;被添加到 runtime 时&lt;/td&gt;
+      &lt;td&gt;收到第一条消息前，可能永远不调用&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;调用顺序&lt;/td&gt;
+      &lt;td&gt;父类-&amp;gt;子类-&amp;gt;分类&lt;/td&gt;
+      &lt;td&gt;父类-&amp;gt;子类&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;调用次数&lt;/td&gt;
+      &lt;td&gt;1次&lt;/td&gt;
+      &lt;td&gt;多次&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;是否需要显式调用父类实现&lt;/td&gt;
+      &lt;td&gt;否&lt;/td&gt;
+      &lt;td&gt;否&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;是否沿用父类的实现&lt;/td&gt;
+      &lt;td&gt;否&lt;/td&gt;
+      &lt;td&gt;是&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;分类中的实现&lt;/td&gt;
+      &lt;td&gt;类和分类都执行&lt;/td&gt;
+      &lt;td&gt;覆盖类中的方法，只执行分类的实现&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;参考链接&lt;/p&gt;
+
+&lt;p&gt;https://www.jianshu.com/p/872447c6dc3f&lt;/p&gt;</content><author><name>沈闻欣</name></author><category term="Objective-C,iOS" /><summary type="html"></summary></entry><entry><title type="html">Github Pages 本地调试环境搭建笔记</title><link href="http://localhost:4000/2019/09/17/gitpages_local_debug_note.html" rel="alternate" type="text/html" title="Github Pages 本地调试环境搭建笔记" /><published>2019-09-17T00:00:00+08:00</published><updated>2019-09-17T00:00:00+08:00</updated><id>http://localhost:4000/2019/09/17/gitpages_local_debug_note</id><content type="html" xml:base="http://localhost:4000/2019/09/17/gitpages_local_debug_note.html">&lt;ul id=&quot;markdown-toc&quot;&gt;
+  &lt;li&gt;&lt;a href=&quot;#之前遗留的坑&quot; id=&quot;markdown-toc-之前遗留的坑&quot;&gt;之前遗留的坑&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#在系统中安装其他版本的-ruby&quot; id=&quot;markdown-toc-在系统中安装其他版本的-ruby&quot;&gt;在系统中安装其他版本的 Ruby&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#使用-bundler-安装-jekyll&quot; id=&quot;markdown-toc-使用-bundler-安装-jekyll&quot;&gt;使用 Bundler 安装 Jekyll&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#参考链接&quot; id=&quot;markdown-toc-参考链接&quot;&gt;参考链接&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;本文主要记录了 Github Pages 搭建本地调试环境时遇到的问题以及解决方案&lt;/p&gt;
+
+&lt;h2 id=&quot;之前遗留的坑&quot;&gt;之前遗留的坑&lt;/h2&gt;
+
+&lt;p&gt;最近想把许久不更新的博客捡起来，之前就一直卡在 &lt;code class=&quot;highlighter-rouge&quot;&gt;gem install&lt;/code&gt; 报的 &lt;code class=&quot;highlighter-rouge&quot;&gt;Gem::FilePermissionError&lt;/code&gt; 错误上，导致无法使用 &lt;code class=&quot;highlighter-rouge&quot;&gt;Bundler&lt;/code&gt; 让文章在本地预览，只能将写好的文字 push 到线上再修改…这样做的效率实在是很低，于是今天我花了一点时间来研究这个问题。&lt;/p&gt;
+
+&lt;p&gt;经过查阅网上的资料，发现原来是因为 MacOS 会预装一版 Ruby，而这版 Ruby 是安装在系统文件夹中的，因此使用这版本的 Ruby ，会将安装的文件&lt;/p&gt;
+
+&lt;p&gt;那么有人会想，如果使用 &lt;code class=&quot;highlighter-rouge&quot;&gt;sudo&lt;/code&gt; 命令能否成功？&lt;/p&gt;
+
+&lt;p&gt;我个人认为这样做可能存在一定的风险，因为使用 &lt;code class=&quot;highlighter-rouge&quot;&gt;sudo&lt;/code&gt; 来执行 &lt;code class=&quot;highlighter-rouge&quot;&gt;gem install&lt;/code&gt; 时，会将文件写入 &lt;code class=&quot;highlighter-rouge&quot;&gt;/usr/bin&lt;/code&gt; 中，可能会造成一些无法撤销的问题。因此这里我打算采用另一种方式。&lt;/p&gt;
+
+&lt;h2 id=&quot;在系统中安装其他版本的-ruby&quot;&gt;在系统中安装其他版本的 Ruby&lt;/h2&gt;
+
+&lt;p&gt;一个好消息是，我们可以在同一台 Mac 中安装多个版本的 Ruby，在使用 gem install 时采用我们自己下载的 Ruby 即可。话不多说我们马上就开始下载，然后把它安装在 &lt;code class=&quot;highlighter-rouge&quot;&gt;/user/local&lt;/code&gt; 路径下。&lt;/p&gt;
+
+&lt;p&gt;现在市面上有多种工具可以安装，例如 &lt;a href=&quot;#https://github.com/postmodern/chruby&quot;&gt;chruby&lt;/a&gt; 、 &lt;a href=&quot;#https://github.com/postmodern/ruby-install&quot;&gt;ruby-install&lt;/a&gt; 、 &lt;a href=&quot;#https://github.com/rbenv/rbenv&quot;&gt;rbenv&lt;/a&gt; 以及 &lt;a href=&quot;#https://rvm.io/rvm/install&quot;&gt;RVM&lt;/a&gt; 等等。&lt;/p&gt;
+
+&lt;p&gt;我分别使用了 &lt;code class=&quot;highlighter-rouge&quot;&gt;ruby-install&lt;/code&gt; 和 &lt;code class=&quot;highlighter-rouge&quot;&gt;rbenv&lt;/code&gt; 两个工具安装了目前最新的 &lt;code class=&quot;highlighter-rouge&quot;&gt;Ruby&lt;/code&gt;，这两款工具安装很简单，可以很方便的在他们的 &lt;code class=&quot;highlighter-rouge&quot;&gt;Github&lt;/code&gt; 主页中查到，再将稳定版本的 &lt;code class=&quot;highlighter-rouge&quot;&gt;Ruby&lt;/code&gt; 安装到电脑中就可以了。&lt;/p&gt;
+
+&lt;p&gt;新版本的 &lt;code class=&quot;highlighter-rouge&quot;&gt;Ruby&lt;/code&gt; 安装好了之后，我们可以用 &lt;code class=&quot;highlighter-rouge&quot;&gt;which ruby&lt;/code&gt; 来查看当前我们使用的 &lt;code class=&quot;highlighter-rouge&quot;&gt;Ruby&lt;/code&gt; 已经不在 &lt;code class=&quot;highlighter-rouge&quot;&gt;/usr/bin&lt;/code&gt; 路径下了，如果使用的是 &lt;code class=&quot;highlighter-rouge&quot;&gt;ruby-install&lt;/code&gt; 安装，路径会显示为 &lt;code class=&quot;highlighter-rouge&quot;&gt;/usr/local/ruby&lt;/code&gt; 如果使用的的是 &lt;code class=&quot;highlighter-rouge&quot;&gt;rbenv&lt;/code&gt; 安装，路径会显示为 &lt;code class=&quot;highlighter-rouge&quot;&gt;/Users/{用户名}/.rbenv/shims/ruby&lt;/code&gt;，总之现在不是在用系统预装的 &lt;code class=&quot;highlighter-rouge&quot;&gt;Ruby&lt;/code&gt; ，就能使用 &lt;code class=&quot;highlighter-rouge&quot;&gt;gem install&lt;/code&gt; 来安装 &lt;code class=&quot;highlighter-rouge&quot;&gt;Bundler&lt;/code&gt; 了。&lt;/p&gt;
+
+&lt;h2 id=&quot;使用-bundler-安装-jekyll&quot;&gt;使用 Bundler 安装 Jekyll&lt;/h2&gt;
+
+&lt;p&gt;想要在本地预览博客效果，需要使用 &lt;code class=&quot;highlighter-rouge&quot;&gt;Gemfile&lt;/code&gt; 的内容来构建 &lt;code class=&quot;highlighter-rouge&quot;&gt;Jekyll&lt;/code&gt; 站点，此时我们需要切换到自己的 &lt;code class=&quot;highlighter-rouge&quot;&gt;Github Pages&lt;/code&gt; 仓库路径下，查找 &lt;code class=&quot;highlighter-rouge&quot;&gt;Gemfile&lt;/code&gt; 文件，如果没有，直接新建一个，在里面输入：&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;source 'https://rubygems.org'
+gem 'github-pages', group: :jekyll_plugins
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;因为国内访问 ruby 源的速度感人，这里可以把第一行改为&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;source 'https://gems.ruby-china.com'
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;也可以用 Bundler 的 Gem 源代码镜像命令&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ bundle config mirror.https://rubygems.org https://gems.ruby-china.com
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;这样就不用改你的 Gemfile 里的 source了&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;Bundler&lt;/code&gt; 安装完成后，切换到自己的 &lt;code class=&quot;highlighter-rouge&quot;&gt;Github Pages&lt;/code&gt; 仓库路径下，通过 &lt;code class=&quot;highlighter-rouge&quot;&gt;Bundler&lt;/code&gt; 来安装 &lt;code class=&quot;highlighter-rouge&quot;&gt;Jekyll&lt;/code&gt; 和其他的依赖项：&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ bundle install
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;完成后，即可使用一下命令来启动本地站点服务：&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ bundle exec jekyll serve
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;服务启动后，我们可以在浏览器中输入：&lt;code class=&quot;highlighter-rouge&quot;&gt;http://localhost:4000&lt;/code&gt; 来访问当前路径下对应的站点信息&lt;/p&gt;
+
+&lt;h2 id=&quot;参考链接&quot;&gt;参考链接&lt;/h2&gt;
+
+&lt;p&gt;https://gems.ruby-china.com&lt;/p&gt;
+
+&lt;p&gt;https://help.github.com/en/articles/setting-up-your-github-pages-site-locally-with-jekyll&lt;/p&gt;
+
+&lt;p&gt;https://stackoverflow.com/questions/51664716/you-dont-have-write-permissions-for-the-library-ruby-gems-2-3-0-directory&lt;/p&gt;
+
+&lt;p&gt;https://www.engineyard.com/blog/how-to-install-ruby-on-a-mac-with-chruby-rbenv-or-rvm&lt;/p&gt;</content><author><name>沈闻欣</name></author><category term="Github" /><category term="Pages,jekyll,gem,ruby,bundler" /><summary type="html"></summary></entry><entry><title type="html">关于我</title><link href="http://localhost:4000/2019/04/28/AboutMe.html" rel="alternate" type="text/html" title="关于我" /><published>2019-04-28T00:00:00+08:00</published><updated>2019-04-28T00:00:00+08:00</updated><id>http://localhost:4000/2019/04/28/AboutMe</id><content type="html" xml:base="http://localhost:4000/2019/04/28/AboutMe.html">&lt;h1 id=&quot;关于我&quot;&gt;关于我&lt;/h1&gt;
+
+&lt;h2 id=&quot;基本信息&quot;&gt;基本信息&lt;/h2&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;姓名：说闻欣&lt;/li&gt;
+  &lt;li&gt;性别：男&lt;/li&gt;
+  &lt;li&gt;出生年月：1988/08&lt;/li&gt;
+  &lt;li&gt;手机：13770834057&lt;/li&gt;
+  &lt;li&gt;邮箱：swxab01@163.com&lt;/li&gt;
+  &lt;li&gt;英语：CET-4&lt;/li&gt;
+  &lt;li&gt;工作地点：南京&lt;/li&gt;
+  &lt;li&gt;工作意向：iOS高级研发工程师/iOS架构师/技术管理等&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;自我评价&quot;&gt;自我评价&lt;/h2&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;本人从事 iOS 开发工作近9年，擅长 iOS 应用的界面搭建和屏幕适配；对移动应用的架构也有自己的思考和认识；&lt;/li&gt;
+  &lt;li&gt;本人热爱编程，对自己负责的程序有着强烈的责任感，并不断完善，使之愈加健壮；&lt;/li&gt;
+  &lt;li&gt;对新鲜事物充满兴趣，之前的工作使用的较多的是 Objective-C 语言，目前正在自学 Swift ；对 Fullter 等跨平台技术也有浓厚的兴趣；&lt;/li&gt;
+  &lt;li&gt;管理过3-14人的小团队，并陆续培养了部分后备力量；&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;工作经历&quot;&gt;工作经历&lt;/h2&gt;
+
+&lt;h3 id=&quot;南京厚建软件有限责任公司&quot;&gt;南京厚建软件有限责任公司&lt;/h3&gt;
+
+&lt;h4 id=&quot;研发副经理&quot;&gt;研发副经理&lt;/h4&gt;
+&lt;ul&gt;
+  &lt;li&gt;时间：2019.03-05&lt;/li&gt;
+  &lt;li&gt;工作描述：&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;1.主导并参与了公司主要移动产品的架构调整，影响范围包括前面提到的“智慧城市”和“阿米协同”调整内容主要是基于中台战略的构想，形成核心层-业务支持层-业务展现层等三层结构。在本人离职前已初步完成alpha版本；
+2.本人于2019年3月参与了研发部门管理岗位的竞聘，并成功当选研发部门的副经理，至离职时，主要负责产品需求跟进、研发计划制定、研发规范的完善、人员管理等工作。经过部门内所有人的共同努力，至本人离职前，部门已完成了过渡，帮助适应了新的人员和工作内容。
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h4 id=&quot;ios研发主管&quot;&gt;iOS研发主管&lt;/h4&gt;
+&lt;ul&gt;
+  &lt;li&gt;时间：2016.10-2019.02&lt;/li&gt;
+  &lt;li&gt;工作描述：&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;1.加入了公司另一款产品“阿米协同”的团队，期间任职研发主管一职，主要负责了客户端前期需求讨论、技术选型，基于之前产品的技术积累和新产品的特性，主导并参与了客户端的底层框架搭建和基础模块的研发等工作；
+2.期间使用了例如工厂模式、单例模式、观察者模式等多种设计模式，引入了路由，并结合MVC、MVVM的优点和具体的应用场景灵活使用开发模式增加代码的稳定性和可扩展性；
+3.经过团队的努力，该产品已被实际应用于吉林、甘肃等多家省市级电视台的日常工作中；
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h4 id=&quot;ios研发主管-1&quot;&gt;iOS研发主管&lt;/h4&gt;
+&lt;ul&gt;
+  &lt;li&gt;时间：2012.08-2016.09&lt;/li&gt;
+  &lt;li&gt;工作描述：&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;1.参与公司“智慧城市”产品的打造，主要负责了与项目经理沟通需求、与其他研发沟通技术实现，协助部门总监管理部门，以及iOS客户端的基础业务功能开发，模块（业务）开发等；
+2.经过团队的努力，该产品已成为公司目前的龙头产品及主要赢利点；
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;江苏金智教育信息股份有限公司&quot;&gt;江苏金智教育信息股份有限公司&lt;/h3&gt;
+
+&lt;h4 id=&quot;ios研发工程师&quot;&gt;iOS研发工程师&lt;/h4&gt;
+&lt;ul&gt;
+  &lt;li&gt;时间：2011/7-2012/8&lt;/li&gt;
+  &lt;li&gt;工作描述：&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;1.参与公司MCP移动校园iOS设备客户端的开发、调试等，已经上线的有包括复旦大学、重庆大学等全国知名高校的移动校园门户、OA办公自动化等项目的移植。
+2.参加了一些社交类应用的开发与培训机构的合作，应用上架前离职。
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;南京新迪杰软件科技有限公司&quot;&gt;南京新迪杰软件科技有限公司&lt;/h3&gt;
+&lt;h4 id=&quot;ios研发工程师-1&quot;&gt;iOS研发工程师&lt;/h4&gt;
+&lt;ul&gt;
+  &lt;li&gt;时间：2010/5-2011/7&lt;/li&gt;
+  &lt;li&gt;工作描述：&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;参与公司项目的开发，在iOS平台上，公司当时与国内知名的艺龙旅行网合作，着力于旅游类的应用产品开发，产品能够搜索艺龙收录的所有酒店以及快捷预定等功能。
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;项目产品经历&quot;&gt;项目/产品经历&lt;/h2&gt;
+
+&lt;h3 id=&quot;阿米协同&quot;&gt;阿米协同&lt;/h3&gt;
+&lt;ul&gt;
+  &lt;li&gt;时间：2016/10-至今&lt;/li&gt;
+  &lt;li&gt;所属公司：南京厚建软件有限责任公司&lt;/li&gt;
+  &lt;li&gt;项目描述：跨行业快速融合解决方案，集内容生产、任务协同、人员沟通为一体的融合媒体交互平台。平台构建了一个基于人和人之间的闭环沟通系统，汇聚平台资源，共享内容，多端分发，并实现移动化生产以及立体式效果追踪。&lt;/li&gt;
+  &lt;li&gt;责任描述：
+    &lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;1.基于智慧城市的开发经验，整合并优化了底层框架，实现了新的路由框架，在保证原跳转机制的同时，提高了跳转效率，实现了模块之间的解耦；
+2.深入理解AutoLayout，更加从容地适配多分辨率的手机屏幕；
+3.基于CoreData和SQLite的特点，根据app对本地数据的读写需要，选择了SQLite（FMDB）实现数据的持久化工具；
+4.根据实际业务灵活的采用MVC/MVVM等多种开发模式，提升了开发效率和功能稳定性；
+5.理解工厂模式、观察者模式等常用的设计模式，并根据业务需要进行使用；
+6.通过cocoapods私有库管理自封装的功能组件，为公司内多应用搭建底层代码库，方便不同应用进行快速开发；
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;    &lt;/div&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;智慧城市&quot;&gt;智慧城市&lt;/h3&gt;
+&lt;ul&gt;
+  &lt;li&gt;时间：2012/9-2016/9&lt;/li&gt;
+  &lt;li&gt;所属公司：南京厚建软件有限责任公司&lt;/li&gt;
+  &lt;li&gt;项目描述：为响应国家智慧城市战略，厚建推出了“智慧城市”产品。这不但可以适应移动互联网的变革，实现“在手机上看电视”的愿景，厚建以先进的流媒体技术以及多项专有技术，实现直播、点播、时移回看、即时互动以及个性化节目播出和管控，确保广电媒体在移动化时代的主流地位；同时也丰富了用户的运营手段，实现更加信息化、智能化的产品；&lt;/li&gt;
+  &lt;li&gt;责任描述：
+    &lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;1.参与需求讨论和研发计划的制定；
+2.负责搭建app底层框架；
+3.负责客户端直播、点播等功能的封装；
+4.提供资讯、专题、爆料等模块的封装，实现数据展现、互动交流等功能；
+5.使用Autolayout对界面进行布局，适配不同手机的屏幕尺寸；
+6.采用CoreData存储临时数据，保证在无网络时也能快速展现近期的历史记录；
+7.实现了一个简单的路由机制，在不同模块、不同页面之间进行快速的、弱耦合的跳转；
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;    &lt;/div&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;移动校园&quot;&gt;移动校园&lt;/h3&gt;
+&lt;ul&gt;
+  &lt;li&gt;时间：2011/8-2012-7&lt;/li&gt;
+  &lt;li&gt;所属公司：江苏金智教育信息股份有限公司&lt;/li&gt;
+  &lt;li&gt;项目描述：与校园OA系统对接，实现校园资讯浏览、校务查询、在线选课等多项功能，满足了教师和学生大部分日常工作、学习的需要。&lt;/li&gt;
+  &lt;li&gt;责任描述：
+    &lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;1.负责校园移动OA的iOS app的研发工作，包括：数据对接和交互，界面搭建等；
+2.负责维护已有代码，修复已知问题等；
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;    &lt;/div&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;教育经历&quot;&gt;教育经历&lt;/h2&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;学校：金陵科技学院&lt;/li&gt;
+  &lt;li&gt;时间：2006/9-2010/7&lt;/li&gt;
+  &lt;li&gt;专业：计算机科学与技术（本科）&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;更新记录&quot;&gt;更新记录&lt;/h2&gt;
+
+&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th&gt;版本&lt;/th&gt;
+      &lt;th&gt;更新时间&lt;/th&gt;
+      &lt;th&gt;更新内容&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;1.0&lt;/td&gt;
+      &lt;td&gt;2019/04/28&lt;/td&gt;
+      &lt;td&gt;更新新增基本信息、工作经历、项目/产品经历、教育经历等&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;1.1&lt;/td&gt;
+      &lt;td&gt;2019/09/16&lt;/td&gt;
+      &lt;td&gt;更新工作经历的描述&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;</content><author><name>沈闻欣</name></author><summary type="html">关于我</summary></entry><entry><title type="html">架构学习</title><link href="http://localhost:4000/2018/11/08/ArchitectureLearnding.html" rel="alternate" type="text/html" title="架构学习" /><published>2018-11-08T00:00:00+08:00</published><updated>2018-11-08T00:00:00+08:00</updated><id>http://localhost:4000/2018/11/08/ArchitectureLearnding</id><content type="html" xml:base="http://localhost:4000/2018/11/08/ArchitectureLearnding.html">&lt;h1 id=&quot;架构学习&quot;&gt;架构学习&lt;/h1&gt;
+
+&lt;h2 id=&quot;架构是什么&quot;&gt;架构是什么？&lt;/h2&gt;
+
+&lt;p&gt;架构，英文是 “Architecture”，在维基百科上，是这样定义的：&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;Architecture is both the process and the product of planning, designing, and constructing buildings or any other structures.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;直译过来就是：架构是规划，设计和建造建筑以及其他结构的&lt;strong&gt;过程&lt;/strong&gt;和&lt;strong&gt;产物&lt;/strong&gt;。
+换一种说法可能更好理解：人类社会中的诸多活动，如建造建筑物，需要通过规划、设计、执行等几个步骤，最终得到一个成果（此处为被建成的建筑物），那么这整个过程，以及最终的成果就被称作&lt;strong&gt;架构&lt;/strong&gt;。这项定义在其他任何具有创造性的活动中通用（比如编写软件）。&lt;/p&gt;
+
+&lt;h2 id=&quot;为什么要做架构&quot;&gt;为什么要做架构？&lt;/h2&gt;
+
+&lt;p&gt;一栋好的房屋，可以在提供稳定环境的前提下（不会随时塌方），最大限度的满足业主对房屋内部进行改造的需求；同样，一个好的软件框架，也应该在稳定的前提下（不随便崩溃），最大限度的满足用户对软件的改造或扩展的需求。&lt;/p&gt;
+
+&lt;p&gt;如何构建这样的软件框架，就是我们接下来所要完成的工作。&lt;/p&gt;
+
+&lt;p&gt;与建造房屋一样，在构建软件架构之前也要明确，该架构的最终目标是什么：不是为了盲目跟风、使用新的技术，也不是为了架构而架构……而是为了解决现有问题，提高团队整体的工作效率，为了能平滑的适应将来的变化等等。&lt;/p&gt;
+
+&lt;p&gt;因此我们可以得出这样一个结论：&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;从软件角度来说，一个“好”的架构是做好一个业务、甚至多个业务的基础。&lt;/strong&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;如何做一个好的架构&quot;&gt;如何做一个“好”的架构？&lt;/h2&gt;
+
+&lt;h3 id=&quot;1合适的边界&quot;&gt;1.合适的边界&lt;/h3&gt;
+
+&lt;p&gt;因为架构是实现业务的基础，也可以理解成架构是为了更好的实现业务服务的，但是现实中的业务多到数不胜数，没有任何一个架构能为所有的业务服务。就像大家都明白“永动机”是不存在的一样，一个能为世间所有业务服务的架构也是不存在的。因此想要做好一个架构，必须要明确它的边界，给架构规定一个范围，如果能在这个范围内能满足业务的需要，我们就可以认为这是一个“好”的架构。&lt;/p&gt;
+
+&lt;h3 id=&quot;2合理的分工&quot;&gt;2.合理的分工&lt;/h3&gt;
+
+&lt;p&gt;就像搭建房屋需要管理人员、施工人员等多个角色分工，共同合作才能完成一样，构建架构也需要针对架构内部的事务进行分工：资历尚浅的人员，我们可以安排比较浅显的工作（如UI）；比较细心的人员，我们可以安排一些逻辑性较强的工作（如数据处理）；能力较强的人员，我们可以安排需要整体思维的工作（如底层架构）等；&lt;/p&gt;
+
+&lt;h3 id=&quot;3高效的沟通&quot;&gt;3.高效的沟通&lt;/h3&gt;
+
+&lt;p&gt;与其他工作一样，架构的过程也需要不同成员之间保持有效的沟通：上层业务需要将需求传递给下一层，这样下一层的人员才能明确应当如何满足上层业务的需求；同样的，下层业务也需要将提供的API的使用方式明确的告知上层，方能使上层业务人员合理的使用封装的API；&lt;/p&gt;
+
+&lt;p&gt;高效的沟通还需要包括统一每个成员的目标，因为沟通的目标是让成员互相了解，从而更好的完成架构的工作，只有让成员的工作目标保持一致，才能构建或更新出一个可以实现统一目标的架构。&lt;/p&gt;
+
+&lt;h2 id=&quot;4统一的目标&quot;&gt;4.统一的目标&lt;/h2&gt;
+
+&lt;p&gt;架构是以整体为单位运作来产生价值的，不论是在架构的构建还是升级的过程，架构作为一个整体的共同目标必须保持一致；而这个目标，就是解决问题。&lt;/p&gt;
+
+&lt;p&gt;需要解决的问题很多，根据影响程度、和严重性，可以归纳出几个急需解决的问题。&lt;/p&gt;
+
+&lt;h2 id=&quot;急需解决的问题&quot;&gt;急需解决的问题&lt;/h2&gt;
+
+&lt;p&gt;目前我们面临的问题主要体现在：&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;strong&gt;界面改造困难&lt;/strong&gt;：公司目前移动端的项目或产品，每一次升级的主要工作量在于对界面的改造，我们发现随着用户的增加和界面改造的需求的增加，改造界面的复杂程度越来越大，改动一个界面可能会引起其他界面或逻辑的不稳定；改造所耗费的时间也在逐渐提升；改造后产生的bug数量也居高不下；&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;strong&gt;冗余代码过多且不合理&lt;/strong&gt;：以往我们会将公用的功能进行封装或形成组件，随着需求的增加，这样的功能类和组件也越来越多，不同的类和组件中存在交叉业务；有的新需求需要将原有的类或组件进行重组，产生新的功能类或组件，不仅使得代码体积变大，也会耗费额外的人力和时间，同时对代码后期的维护和升级带来了隐患；&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;原因分析&quot;&gt;原因分析&lt;/h2&gt;
+
+&lt;p&gt;&lt;strong&gt;从具体问题分析&lt;/strong&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;strong&gt;界面改造困难&lt;/strong&gt;：实现业务时没有进行有效的分层和分工，导致不该在界面层出现的逻辑代码被写到了界面层，一旦界面需要修改，就势必会对业务逻辑产生影响；&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;strong&gt;冗余代码&lt;/strong&gt;：功能、组件拆分不够彻底，拆分的颗粒过大；&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;strong&gt;整体分析&lt;/strong&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;代码架构混乱，层级划分不合理，界面层、业务层、框架层的代码互相渗透；&lt;/li&gt;
+  &lt;li&gt;规范不清晰，执行情况不佳：会造成后续的升级更加混乱；&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;明确了问题，也分析了问题产生的原因，就有了解决问题的方向。&lt;/p&gt;
+
+&lt;h2 id=&quot;如何解决现在的问题&quot;&gt;如何解决现在的问题？&lt;/h2&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;strong&gt;合理分层&lt;/strong&gt;。比如：自上而下分为数据展示层、数据加工层、数据管理层；明确每一层的职责范围，严禁代码直接跨层调用；&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;合理拆分功能点&lt;/strong&gt;。一个类只实现一个功能，多个功能组合形成新的功能（暂定）；&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;优化现有规范&lt;/strong&gt;。着重点从“形”转为“神”，代码结构（逻辑）重于代码写法；&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;优化过程中的注意事项&quot;&gt;优化过程中的注意事项&lt;/h2&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;必须从实现业务的角度思考，让业务工程师能专注业务的实现；&lt;/li&gt;
+  &lt;li&gt;代码整齐，分类明确，规范统一；&lt;/li&gt;
+  &lt;li&gt;易测试，易拓展，保持前瞻性；&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;预期的效果&quot;&gt;预期的效果&lt;/h2&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;业务工程师能专注业务实现，较少接触底层逻辑；实现业务层、界面层简单化，方便修改；&lt;/li&gt;
+  &lt;li&gt;功能、组件拆分合理，不同的业务只关联与之相关的功能或组件，缩减包的大小；&lt;/li&gt;
+  &lt;li&gt;形成统一的底层代码库，便于技术积累；且可作为协同、工厂等工程的公用底层库；&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;计划安排&quot;&gt;计划安排&lt;/h2&gt;
+
+&lt;p&gt;从整体来看，阿米剪辑可以看做是一个简易版的阿米协同，而阿米协同相当于一个简易版的工厂&lt;/p&gt;
+
+&lt;p&gt;因此我们的计划是 阿米剪辑 &amp;gt; 阿米协同 &amp;gt; 工厂，由简到繁，循序渐进。&lt;/p&gt;
+
+&lt;p&gt;关于时间的安排，会在接下来的几天内整理出来。&lt;/p&gt;
+
+&lt;h2 id=&quot;参考文献&quot;&gt;参考文献&lt;/h2&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;#http://keeganlee.me/post/architecture/20160303&quot;&gt;APP架构经验总结&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#https://casatwy.com/iosying-yong-jia-gou-tan-kai-pian.html#&quot;&gt;iOS应用架构谈 开篇&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#https://www.infoq.cn/articles/an-informal-discussion-on-architecture-part01&quot;&gt;架构漫谈（一）：什么是架构？&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#https://www.infoq.cn/article/an-informal-discussion-on-architecture-part08&quot;&gt;架构漫谈（八）：从架构的角度看如何写好代码&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#https://www.infoq.cn/article/an-informal-discussion-on-architecture-part09&quot;&gt;架构漫谈（九）：理清技术、业务和架构的关系&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;</content><author><name>沈闻欣</name></author><category term="architecture,架构" /><summary type="html">架构学习</summary></entry><entry><title type="html">Autolayout and UIScrollView</title><link href="http://localhost:4000/2018/06/10/AutolayoutAndUIScrollView.html" rel="alternate" type="text/html" title="Autolayout and UIScrollView" /><published>2018-06-10T00:00:00+08:00</published><updated>2018-06-10T00:00:00+08:00</updated><id>http://localhost:4000/2018/06/10/AutolayoutAndUIScrollView</id><content type="html" xml:base="http://localhost:4000/2018/06/10/AutolayoutAndUIScrollView.html"></content><author><name>沈闻欣</name></author><summary type="html"></summary></entry></feed>

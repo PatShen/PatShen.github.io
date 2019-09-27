@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1"><!-- Begin Jekyll SEO tag v2.5.0 -->
+<title>Github Pages 的 markdown 文档中自动生成索引 | 沈闻欣的储物间</title>
+<meta name="generator" content="Jekyll v3.8.5" />
+<meta property="og:title" content="Github Pages 的 markdown 文档中自动生成索引" />
+<meta name="author" content="沈闻欣" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="我叫沈闻欣，是一名iOS开发者。" />
+<meta property="og:description" content="我叫沈闻欣，是一名iOS开发者。" />
+<link rel="canonical" href="http://localhost:4000/2019/09/22/githubpages_toc.html" />
+<meta property="og:url" content="http://localhost:4000/2019/09/22/githubpages_toc.html" />
+<meta property="og:site_name" content="沈闻欣的储物间" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2019-09-22T00:00:00+08:00" />
+<script type="application/ld+json">
+{"url":"http://localhost:4000/2019/09/22/githubpages_toc.html","headline":"Github Pages 的 markdown 文档中自动生成索引","dateModified":"2019-09-22T00:00:00+08:00","datePublished":"2019-09-22T00:00:00+08:00","mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/2019/09/22/githubpages_toc.html"},"author":{"@type":"Person","name":"沈闻欣"},"description":"我叫沈闻欣，是一名iOS开发者。","@type":"BlogPosting","@context":"http://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/assets/css/style.css"><link type="application/atom+xml" rel="alternate" href="http://localhost:4000/feed.xml" title="沈闻欣的储物间" /></head>
+<body><header class="site-header">
+
+  <div class="wrapper"><a class="site-title" rel="author" href="/">沈闻欣的储物间</a><nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger"><a class="page-link" href="/about/">About</a></div>
+      </nav></div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title p-name" itemprop="name headline">Github Pages 的 markdown 文档中自动生成索引</h1>
+    <p class="post-meta">
+      <time class="dt-published" datetime="2019-09-22T00:00:00+08:00" itemprop="datePublished">2019-09-22
+      </time></p>
+  </header>
+
+  <div class="post-content e-content" itemprop="articleBody">
+    <ul id="markdown-toc">
+  <li><a href="#背景" id="markdown-toc-背景">背景</a></li>
+  <li><a href="#探索" id="markdown-toc-探索">探索</a>    <ul>
+      <li><a href="#原理" id="markdown-toc-原理">原理</a></li>
+      <li><a href="#实现" id="markdown-toc-实现">实现</a></li>
+      <li><a href="#特殊情况" id="markdown-toc-特殊情况">特殊情况</a></li>
+      <li><a href="#实例介绍" id="markdown-toc-实例介绍">实例介绍</a></li>
+    </ul>
+  </li>
+  <li><a href="#参考链接" id="markdown-toc-参考链接">参考链接</a></li>
+</ul>
+
+<h2 id="背景">背景</h2>
+
+<p>所谓的 <code class="highlighter-rouge">自动生成索引</code> 在 markdown 中指的是 <code class="highlighter-rouge">TOC(Table of Contents)</code>，我们知道，在 markdown 语法中可以使用 <code class="highlighter-rouge">#</code> 表示一级标题，<code class="highlighter-rouge">##</code> 表示二级标题，以此类推…</p>
+
+<p>通过 <code class="highlighter-rouge">TOC</code> 可以让我们在文章的开头就把文章中的标题单独显示出来。这个特性可以帮助读者更好的理解文章的结构，从而更好的理解作者的文章内容。</p>
+
+<p>现在市面上很多使用 <code class="highlighter-rouge">markdown</code> 作为文档的网站都支持 <code class="highlighter-rouge">TOC</code> ，但是使用 <code class="highlighter-rouge">jekyll</code> 生成的 <code class="highlighter-rouge">Github Pages</code> 并不支持这一特性，这让很多像笔者一样的使用 <code class="highlighter-rouge">jekyll</code> 生成博客的作者很是苦恼。</p>
+
+<h2 id="探索">探索</h2>
+
+<p>那么有没有什么方法可以让使用 <code class="highlighter-rouge">jekyll</code> 的 <code class="highlighter-rouge">Github Pages</code> 也支持 <code class="highlighter-rouge">TOC</code> 特性吗？</p>
+
+<h3 id="原理">原理</h3>
+
+<p>经过查阅资料，我们发现 <code class="highlighter-rouge">jekyll</code> 默认使用 <code class="highlighter-rouge">Kramdown</code> 来解析 <code class="highlighter-rouge">markdown</code> 并且将其转换成 <code class="highlighter-rouge">HTML</code> 页面。</p>
+
+<p><code class="highlighter-rouge">Kramdown</code> 在转换时默认会将标题生成一个对应的 ID，同时也会将自动生成的 ID 添加到索引中。</p>
+
+<p>有关 <code class="highlighter-rouge">Kramdown</code> 自动生成 ID 的规则以及 ID 对应的顶部索引，可以在 <a href="https://kramdown.gettalong.org/converter/html.html#auto-ids">Automatic Generation of Header IDs</a> 和 <a href="https://kramdown.gettalong.org/converter/html.html#toc">Automatic “Table of Contents” Generation</a> 查询到。</p>
+
+<h3 id="实现">实现</h3>
+
+<p><code class="highlighter-rouge">Kramdown</code> 索引支持 <code class="highlighter-rouge">有序列表</code> 和 <code class="highlighter-rouge">无序列表</code> 两种表现形式，实际使用时，只需要将以下格式添加到自己的文章中，格式如下：</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>1. 有序列表（此处可写任意字符串）
+{:toc}
+</code></pre></div></div>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>* 无序列表（此处可写任意字符串）
+{:toc}
+</code></pre></div></div>
+
+<h3 id="特殊情况">特殊情况</h3>
+
+<p><code class="highlighter-rouge">Kramdown</code> 也支持不将某些标题显示在索引上，此时只需要在 <code class="highlighter-rouge">该标题</code> 下方加上 <code class="highlighter-rouge">{:.no_toc}</code> 即可。</p>
+
+<h3 id="实例介绍">实例介绍</h3>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>* toc
+{:toc}
+
+# 一号标题
+
+## 二号标题
+
+### 三号标题
+{:.no_toc}
+</code></pre></div></div>
+
+<h2 id="参考链接">参考链接</h2>
+
+<p><a href="https://stackoverflow.com/questions/54243424/how-to-generate-a-table-of-contents-toc-on-a-rendered-github-pages-readme-md">How to generate a Table of Contents (ToC) on a rendered Github Pages README.md?</a></p>
+
+<p><a href="https://jekyllrb.com/docs/configuration/markdown/">Jekyll Markdown Options</a></p>
+
+<p><a href="http://www.seanbuscay.com/blog/jekyll-toc-markdown/">How I Add a Table of Contents to my Jekyll Blog Written in Markdown</a></p>
+
+<p><a href="https://kramdown.gettalong.org/converter/html.html">Kramdown HTML Converter</a></p>
+
+  </div><a class="u-url" href="/2019/09/22/githubpages_toc.html" hidden></a>
+</article>
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/"></data>
+
+  <div class="wrapper">
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col one-half">
+      <h2 class="footer-heading">沈闻欣的储物间</h2>
+        <ul class="contact-list">
+          <li class="p-name">沈闻欣</li><li><a class="u-email" href="mailto:386893640@qq.com">386893640@qq.com</a></li></ul>
+      </div>
+
+      <div class="footer-col one-half">
+        <p>我叫沈闻欣，是一名iOS开发者。
+</p>
+      </div>
+
+      <div class="social-links"><ul class="social-media-list"><li><a href="https://github.com/PatShen" title="PatShen"><svg class="svg-icon grey"><use xlink:href="/assets/minima-social-icons.svg#github"></use></svg></a></li></ul>
+</div>
+    </div>
+
+  </div>
+
+</footer>
+</body>
+
+</html>

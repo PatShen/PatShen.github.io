@@ -84,7 +84,7 @@ objc_msgSend(receiver, selector, arg1, arg2, ...)
 
 这些类和对象的结构图类似下图：
 
-![Messaging Framework](../assets/img/runtime_messaging.gif)
+![Messaging Framework](/assets/img/runtime_messaging.gif)
 
 当一条消息被发送给一个对象时，消息传递函数会跟随 isa 指针指向类结构，并且根据调度表查询方法选择器（method selector）；如果无法找到，则 objc_msgSend 将会不断指向其超类，并尝试在超类的调度表中查询方法选择器（method selector），直到查询到 NSObject 类。当找到选择器后，便调用其对应的方法，传递参数。
 
@@ -244,7 +244,7 @@ Objective-C 程序可以在运行时加载或链接新的类（class）和类别
 
 转发和继承相似，可以用于为Objc编程添加一些多继承的效果。就像下图那样，一个对象把消息转发出去，就好似它把另一个对象中的方法借过来或是“继承”过来一样。
 
-![Forwarding](../assets/img/runtime_forwarding.gif)
+![Forwarding](/assets/img/runtime_forwarding.gif)
 
 在这张图中，Warrior 类的一个对象转发了一条 `negotiate` 消息到 Diplomat 类的一个对象，此时的 Warrior 对象就像 Diplomat 对象一样，它将会对 `negotiate` 消息作出回应（尽管实际上是由 Diplomat 对象在处理）。
 
