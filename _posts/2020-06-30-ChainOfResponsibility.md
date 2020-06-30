@@ -19,11 +19,11 @@ tag: Swift,Design Patterns
 
 责任链的工作过程可以简单的通过下图体现出来：
 
-![图1](#/assets/img/20200630chainofresposiblity/1.png)
+![图1](/assets/img/20200630chainofresposiblity/1.png)
 
 先由事件的发起者发起一个事务，由责任链负责将其处理完成并将结果反馈给发起者。对于发起者来说，责任链内部的成员、顺序、结果都是不可见的，这大大降低了二者之间的耦合度，它只需要获取最终的结果即可。
 
-![图2](#/assets/img/20200630chainofresposiblity/2.png)
+![图2](/assets/img/20200630chainofresposiblity/2.png)
 
 在责任链的内部，可以有多个实体对外部的请求做处理，如果某个实体无法处理事务，那么它将会将事务传递给下一个实体。
 
