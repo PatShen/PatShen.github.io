@@ -172,6 +172,26 @@ head.request {
 }
 ```
 
+# 责任链模式在 iOS SDK 中的实现
+
+在 iOS SDK 中也有责任链模式的具体实现，我们可以在 `UIView` 中看到下面两个函数：
+
+```Swift
+func point(inside point: CGPoint, with event: UIEvent?) -> Bool
+```
+这个函数表示，点击屏幕时，如果被点击的点在某个 view 的范围内时，会返回 `true`，否则返回 `false`；
+
+```Swift
+func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView?
+```
+关键的第二个函数，这个函数会通过调用每个子视图的 [point(inside:with:)](https://developer.apple.com/documentation/uikit/uiview/1622469-hittest) 函数来遍历，如果它返回了 `true`，就将遍历子视图的层次结构，直到找到「最前面」的（即最上层superview）视图；如果某个视图不包含这个点，这一分支会被忽略；同时系统也会忽略 `isHidden == true`、`isUserInteractionEnabled == true` 和 `alpha < 0.01` 的视图；
+
+> 我们可以通过重写这个方法，让点击事件能够响应在某个 view 之外的事件；例如扩大 `UIButton` 的响应范围、点击超出 `tabBar` 之外的 `item` 等；
+
+## 一些细节
+
+在调试过程中，我发现 `hitTest(_, with)` 这个方法会被调用两次，苹果工程师在 [这里](https://lists.apple.com/archives/cocoa-dev/2014/Feb/msg00118.html) 做了简单的说明，表示系统需要在两次调用之间做一些事情，再由于这个函数不会影响到其他事件，因此不会有太大影响；而且我们也能很明显的看到，系统会在两次调用这个函数之后再去调用 `UIView` 的 `touchesBegan(_,with)` 函数，这也能说明不受（调用两次的）影响；
+
 # 补充说明
 
 本文中的代码完整可以在 [这里](https://github.com/PatShen/ChainOfResposibilityDemo) 找到，采用的工具版本分别是 `XCode 11.5`，`Swift 5.1`
@@ -181,3 +201,4 @@ head.request {
 * [iOS设计模式-责任链
 ](http://jackliu17.github.io/2016/06/06/iOS%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F-%E8%B4%A3%E4%BB%BB%E9%93%BE/)
 * [责任链模式：Chain of Responsibility](https://juejin.im/post/5d63cc41e51d453b730b0f63)
+* [Re: -hitTest:withEvent: called twice? - Apple - Lists.apple.com](https://lists.apple.com/archives/cocoa-dev/2014/Feb/msg00118.html)
