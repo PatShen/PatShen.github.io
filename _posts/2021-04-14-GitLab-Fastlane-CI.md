@@ -5,6 +5,9 @@ tag: GitLab, fastlane, CI, iOS
 
 ---
 
+* TOC
+{:toc}
+
 # 概述
 
 Gitlab 自带了一套 CI，通过注册 Runner，关联 gitlab-ci.yml，触发相应的操作。
