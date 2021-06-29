@@ -1,16 +1,12 @@
 ---
 layout: post
-title: GitLab-Fastlane-CI
+title: GitLab-Fastlane-CI 注解
 tag: GitLab, fastlane, CI, iOS
 
 ---
 
 * TOC
 {:toc}
-
-# 概述
-
-Gitlab 自带了一套 CI，通过注册 Runner，关联 gitlab-ci.yml，触发相应的操作。
 
 
 # 安装Runner
@@ -78,8 +74,8 @@ export LANG=en_US.UTF-8
 
 # 参考链接
 
-* https://juejin.cn/post/6944878021560139783
-* https://columns.chicken-house.net/2017/08/05/what-cicd-do-you-need/
-* https://juejin.cn/post/6844904184219697160
-* https://www.jianshu.com/p/efeef0b70391
-* https://docs.gitlab.com/ee/ci/yaml/README.html#rules
+* [https://juejin.cn/post/6944878021560139783](https://juejin.cn/post/6944878021560139783)
+* [https://columns.chicken-house.net/2017/08/05/what-cicd-do-you-need/](https://columns.chicken-house.net/2017/08/05/what-cicd-do-you-need/)
+* [https://juejin.cn/post/6844904184219697160](https://juejin.cn/post/6844904184219697160)
+* [https://www.jianshu.com/p/efeef0b70391](https://www.jianshu.com/p/efeef0b70391)
+* [https://docs.gitlab.com/ee/ci/yaml/README.html#rules](https://docs.gitlab.com/ee/ci/yaml/README.html#rules)
