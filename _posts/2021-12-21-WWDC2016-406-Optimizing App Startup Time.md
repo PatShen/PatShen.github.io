@@ -192,9 +192,23 @@ Measuring before main()
 
 ![p_10.png](/assets/img/20201221/p_10.png)
 
+# 更多
 
+## 二进制重排
+
+原因：虚拟内存；内存分页；缺页异常（常见于app启动时）
+
+方法：使用order文件进行（libobjc.order）
+
+检验：
+
+1. Build Settings -> Write Link Map File => YES
+2. add xxx.order，写入你想要执行的方法的顺序
+3. Build Settings -> Order File 加入order文件路径
+
+效果：可以让启动时需要加载的方法尽量集中，减少缺页异常提高启动速度。
 
 # 参考链接
 
-* https://xiamoon.com/2018/09/23/WWDC2016-406-Optimizing-App-Startup-Time/#more
-* https://developer.apple.com/documentation/xcode/reducing-your-app-s-launch-time
+* [https://xiamoon.com/2018/09/23/WWDC2016-406-Optimizing-App-Startup-Time/#more](https://xiamoon.com/2018/09/23/WWDC2016-406-Optimizing-App-Startup-Time/#more)
+* [https://developer.apple.com/documentation/xcode/reducing-your-app-s-launch-time](https://developer.apple.com/documentation/xcode/reducing-your-app-s-launch-time)
