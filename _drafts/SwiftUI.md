@@ -26,11 +26,11 @@
 
 关键字|描述|例子
 -----|---|-----
-@State||
-@Published||
-@EnvironmentObject||
-@StateObject||
-@Binding||
+@State|You use the @State attribute to establish a source of truth for data in your app that you can modify from more than one view. SwiftUI manages the underlying storage and automatically updates views that depend on the value.|
+@Published|An observable object needs to publish any changes to its data, so that its subscribers can pick up the change.|
+@EnvironmentObject|环境变量，功能有点类似全局变量|
+@StateObject|Use it to initialize a model object for a given property only once during the life time of the app. This is true when you use the attribute in an app instance, as shown here, as well as when you use it in a view.|
+@Binding|类型是 Bindg<T> (范型).|
 
 ## 在 SwiftUI 中使用 UIKit 控件
 
