@@ -1,0 +1,73 @@
+---
+layout: post
+title: Swift自定义命名空间
+tag: iOS, Swift, Genrics
+
+---
+
+* TOC
+{:toc}
+# 起因
+
+如果某个协议使用了 `associated type`，像这样：
+
+```Swift
+Protocol MyProtocol {
+  associatedtype Page
+  func navigate(to: Page)
+}
+```
+
+在使用的时候如果直接用这个协议类型，就会报错: `Protocol can only be used as a generic constraint because it has Self or associated type requirements`
+
+```Swift
+Class A {
+  func doSomething(protocolObject: MyProtocol) {
+    ...
+  }
+}
+```
+
+# 解决思路和方案
+
+这个问题的原因是，协议中的 `Page` 不属于任何一个已被明确实现的类型。因为 Swift 的特性，不允许任何没有明确的类型被执行，因此我们可以通过范型来解决这个问题。
+
+* 我们可以将 doSomething 方法改为以下方式：
+
+```Swift
+Class A {
+  func doSomething<P: MyProtocol>(protocolObject: P) {
+    ...
+  }
+}
+```
+
+* 如果作为一个类或结构体的属性，也可以改成以下方式：
+
+```Swift
+Class A <P: MyProtocol> {
+  var protocolObj : P?
+  ...
+
+  func testFunction() {
+     protocolObj?.navigate(to: xxx)
+     ...
+  }
+}
+
+Class B: MyProtocol {
+  func navigate(to: Page) {}
+}
+
+Class C {
+  func test() {
+    let aInstance = A<B>()
+    aInstance.testFunction()
+    ...
+  }
+}
+```
+
+# 参考链接
+
+* [How to fix the error “protocol can only be used as a generic constraint because it has Self or associated type requirements”](https://www.hackingwithswift.com/example-code/language/how-to-fix-the-error-protocol-can-only-be-used-as-a-generic-constraint-because-it-has-self-or-associated-type-requirements)
