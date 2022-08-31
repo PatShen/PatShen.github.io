@@ -1,3 +1,10 @@
+---
+layout: post
+title: 记一个 git pull 超时问题的解决办法
+tag: Git
+
+---
+
 * TOC
 {:toc}
 
